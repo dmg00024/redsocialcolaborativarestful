@@ -6,13 +6,13 @@
 package resources;
 
 import bean.RedSocial;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dto.UsuarioDTO;
-import modelo.Usuario;
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -28,18 +28,26 @@ public class RedSocialColaborativaRESTFUL
    
     /**
      * 
-     * @param _usuario 
+     * @param _usuarioJSON 
+     * @throws java.io.IOException 
      */
-    @RequestMapping(value = "/usuarios", method = RequestMethod.POST, consumes = "application/json")
-    public void altaUsuario(@RequestBody UsuarioDTO _usuario)
+    @RequestMapping(value = "/usuarios", method = RequestMethod.POST)
+    public void altaUsuario(@RequestBody String _usuarioJSON) throws IOException
     {
+        UsuarioDTO _usuario;
+        
+        ObjectMapper mapper=new ObjectMapper();
+        _usuario=mapper.readValue(_usuarioJSON, UsuarioDTO.class);
+        
         try
         {
             red.altaUsuario(_usuario.getUsername(), _usuario.getPassword(), _usuario.getEmail());
         }
-        catch(exceptionsBusiness.UsernameNoDisponible e)
+        catch(Exception e)
         {
-            //enviar codigo de error
+            throw new exceptionsBusiness.UsernameNoDisponible();
         }
+        
     }
+    
 }
