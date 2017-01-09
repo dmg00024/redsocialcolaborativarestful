@@ -51,7 +51,7 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
-                    <file>${file.reference.spring-security-config-4.2.0.RELEASE.jar}</file>
+                    <file>${libs.hibernate4-persistence.classpath}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
             </web-module-libraries>
