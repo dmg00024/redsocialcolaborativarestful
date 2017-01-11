@@ -6,13 +6,14 @@
 package resources;
 
 import bean.RedSocial;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dto.UsuarioDTO;
-import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -25,20 +26,31 @@ public class RedSocialColaborativaRESTFUL
 {
     @Autowired
     private RedSocial red;
+
+    /**
+     * 
+     */
+//    public RedSocialColaborativaRESTFUL() 
+//    {
+//        String usernameConectado=null;
+//        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        
+//        if(principal instanceof UserDetails)
+//        {
+//            usernameConectado=((UserDetails) principal).getUsername();
+//        }
+//        
+//        red.setUsernameConectado(usernameConectado);
+//    }
+    
    
     /**
      * 
-     * @param _usuarioJSON 
-     * @throws java.io.IOException 
+     * @param _usuario 
      */
-    @RequestMapping(value = "/usuarios", method = RequestMethod.POST)
-    public void altaUsuario(@RequestBody String _usuarioJSON) throws IOException
+    @RequestMapping(value = "/perfil", method = RequestMethod.POST, consumes = "application/json")
+    public void altaUsuario(@RequestBody UsuarioDTO _usuario)
     {
-        UsuarioDTO _usuario;
-        
-        ObjectMapper mapper=new ObjectMapper();
-        _usuario=mapper.readValue(_usuarioJSON, UsuarioDTO.class);
-        
         try
         {
             red.altaUsuario(_usuario.getUsername(), _usuario.getPassword(), _usuario.getEmail());
@@ -47,7 +59,32 @@ public class RedSocialColaborativaRESTFUL
         {
             throw new exceptionsBusiness.UsernameNoDisponible();
         }
+    }
+    
+    /**
+     * 
+     */
+    @RequestMapping(value = "/perfil", method = RequestMethod.DELETE, produces = "application/json")
+    public void bajaUsuario()
+    {     
+        red.bajaUsuario();
+    }
+    
+    
+    /**
+     * 
+     * @return 
+     */
+    @RequestMapping(value = "/prueba", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody UsuarioDTO prueba()
+    {
+        UsuarioDTO prueba=new UsuarioDTO();
         
+        prueba.setUsername("probando");
+        prueba.setEmail("probando");
+        prueba.setPassword("probando");
+        
+        return prueba;
     }
     
 }
