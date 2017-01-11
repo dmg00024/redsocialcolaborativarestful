@@ -79,5 +79,7 @@ and open the template in the editor.
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
     
     <tx:annotation-driven transaction-manager="transactionManager" />
+    
+
                 
 </beans>
