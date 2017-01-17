@@ -8,6 +8,8 @@ package resources;
 import bean.RedSocial;
 import dto.UsuarioDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,29 +26,12 @@ public class RedSocialColaborativaRESTFUL
 {
     @Autowired
     private RedSocial red;
-
-    /**
-     * 
-     */
-//    public RedSocialColaborativaRESTFUL() 
-//    {
-//        String usernameConectado=null;
-//        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        
-//        if(principal instanceof UserDetails)
-//        {
-//            usernameConectado=((UserDetails) principal).getUsername();
-//        }
-//        
-//        red.setUsernameConectado(usernameConectado);
-//    }
-    
    
     /**
      * 
      * @param _usuario 
      */
-    @RequestMapping(value = "/perfil", method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "/registro", method = RequestMethod.POST, consumes = "application/json")
     public void altaUsuario(@RequestBody UsuarioDTO _usuario)
     {
         try
@@ -83,6 +68,24 @@ public class RedSocialColaborativaRESTFUL
         prueba.setPassword("probando");
         
         return prueba;
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    @RequestMapping(value = "/prueba2", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody String prueba2()
+    {
+        String usernameConectado=null;
+        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if(principal instanceof UserDetails)
+        {
+            usernameConectado=((UserDetails) principal).getUsername();
+        }
+        
+        return usernameConectado;
     }
     
 }

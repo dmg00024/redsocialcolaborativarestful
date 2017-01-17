@@ -6,12 +6,23 @@
             http://www.springframework.org/schema/beans/spring-beans.xsd
             http://www.springframework.org/schema/security 
             http://www.springframework.org/schema/security/spring-security.xsd">
-
-	<http />
-
-	<user-service>
-		<user name="user" password="password" authorities="ROLE_USER" />
-	</user-service>
+    
+    
+     <http auto-config="true" >
+        <intercept-url pattern="/prueba" access="permitAll" />
+        <intercept-url pattern="/prueba2" access="hasRole('USER')" />
+        <form-login  authentication-failure-url="/prueba" />
+    </http>
+  
+    <authentication-manager >
+        <authentication-provider>
+            <user-service>
+                <user name="dmg00024"  password="123456"  authorities="ROLE_USER" />
+                <user name="daniel" password="123456" authorities="ROLE_USER" />
+            </user-service>
+        </authentication-provider>
+    </authentication-manager>
+       
 
 </b:beans>
 
