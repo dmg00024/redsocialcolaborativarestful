@@ -8,20 +8,19 @@
             http://www.springframework.org/schema/security/spring-security.xsd">
     
     
-     <http auto-config="true" >
+    <http auto-config="true">
         <intercept-url pattern="/prueba" access="permitAll" />
         <intercept-url pattern="/prueba2" access="hasRole('USER')" />
         <form-login  authentication-failure-url="/prueba" />
     </http>
   
     <authentication-manager >
-        <authentication-provider>
-            <user-service>
-                <user name="dmg00024"  password="123456"  authorities="ROLE_USER" />
-                <user name="daniel" password="123456" authorities="ROLE_USER" />
-            </user-service>
-        </authentication-provider>
+        <authentication-provider user-service-ref="database"/>
     </authentication-manager>
+    
+    <jdbc-user-service id="database" data-source-ref="dataSource"
+    users-by-username-query="select username, password, true from usuario where username=?"
+    authorities-by-username-query="select username, role from usuario where username=?" />
        
 
 </b:beans>

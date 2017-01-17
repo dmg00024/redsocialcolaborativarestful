@@ -27,6 +27,7 @@ public class Usuario implements Serializable
     private Nivel nivel;
     private String email;
     private String password;
+    private final String role;
     @ManyToMany (fetch = FetchType.LAZY)
     private final List<Usuario> amigos;
     @ManyToMany (fetch = FetchType.LAZY)
@@ -45,6 +46,7 @@ public class Usuario implements Serializable
         viasRealizadas=new ArrayList();
         peticionesAmistad=new ArrayList();
         comentarios=new ArrayList();
+        role="ROLE_USER";
     }
 
     /**
@@ -64,6 +66,7 @@ public class Usuario implements Serializable
         Nivel n=new Nivel(Nivel.nivelAsociado._1);
         this.nivel=n;
         comentarios=new ArrayList();
+        role="ROLE_USER";
     }
 
     /**
@@ -85,6 +88,7 @@ public class Usuario implements Serializable
         Nivel n=new Nivel(Nivel.nivelAsociado._1);
         this.nivel=n;
         comentarios=new ArrayList();
+        role="ROLE_USER";
     }
 
     /**
@@ -106,6 +110,7 @@ public class Usuario implements Serializable
         this.username = username;
         this.password = password;
         comentarios=new ArrayList();
+        role="ROLE_USER";
     }
     
     /**
@@ -233,6 +238,17 @@ public class Usuario implements Serializable
     {
         this.password = password;
     }
+
+    /**
+     * 
+     * @return 
+     */
+    public String getRole()
+    {
+        return role;
+    }
+    
+    
 
     /**
      * 
