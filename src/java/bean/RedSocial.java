@@ -285,6 +285,7 @@ public class RedSocial
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.AltaUsuarioException.class)
     public void altaUsuario(String _username, String _password, String _email)
     {
+        //tranformacion de password a hash sha-256
         try
         {
             daoUsuario.guardarUsuario(new Usuario(_username, _password, _email));
