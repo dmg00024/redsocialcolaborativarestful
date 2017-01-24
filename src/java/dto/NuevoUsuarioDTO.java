@@ -9,7 +9,7 @@ package dto;
  *
  * @author Daniel
  */
-public class UsuarioDTO 
+public class NuevoUsuarioDTO 
 {
     private String username;
     private String password;
@@ -18,7 +18,7 @@ public class UsuarioDTO
     /**
      * 
      */
-    public UsuarioDTO(){}
+    public NuevoUsuarioDTO(){}
 
     /**
      * 

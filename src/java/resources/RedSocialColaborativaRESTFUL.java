@@ -6,7 +6,15 @@
 package resources;
 
 import bean.RedSocial;
-import dto.UsuarioDTO;
+import dto.NuevoUsuarioDTO;
+import java.security.NoSuchAlgorithmException;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import modelo.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,19 +34,20 @@ public class RedSocialColaborativaRESTFUL
 {
     @Autowired
     private RedSocial red;
-   
+    
     /**
      * 
      * @param _usuario 
+     * @throws java.security.NoSuchAlgorithmException 
      */
-    @RequestMapping(value = "/registro", method = RequestMethod.POST, consumes = "application/json")
-    public void altaUsuario(@RequestBody UsuarioDTO _usuario)
+    @RequestMapping(value = "/perfil", method = RequestMethod.POST, consumes = "application/json")
+    public void altaUsuario(@RequestBody NuevoUsuarioDTO _usuario) throws NoSuchAlgorithmException
     {
         try
         {
             red.altaUsuario(_usuario.getUsername(), _usuario.getPassword(), _usuario.getEmail());
         }
-        catch(Exception e)
+        catch(exceptionsBusiness.UsernameNoDisponible ex)
         {
             throw new exceptionsBusiness.UsernameNoDisponible();
         }
@@ -46,22 +55,41 @@ public class RedSocialColaborativaRESTFUL
     
     /**
      * 
+     * @param _usuario 
      */
-    @RequestMapping(value = "/perfil", method = RequestMethod.DELETE, produces = "application/json")
+    @RequestMapping(value = "/perfil", method = RequestMethod.PUT, consumes = "application/json")
+    public void actualizarUsuario(@RequestBody NuevoUsuarioDTO _usuario)
+    {
+        
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    @RequestMapping(value = "/perfil", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody Usuario obtenerUsuario()
+    {
+        return red.getUsuarioConectado();
+    }
+    
+    /**
+     * 
+     */
+    @RequestMapping(value = "/perfil", method = RequestMethod.DELETE)
     public void bajaUsuario()
     {     
         red.bajaUsuario();
     }
-    
     
     /**
      * 
      * @return 
      */
     @RequestMapping(value = "/prueba", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody UsuarioDTO prueba()
+    public @ResponseBody NuevoUsuarioDTO prueba()
     {
-        UsuarioDTO prueba=new UsuarioDTO();
+        NuevoUsuarioDTO prueba=new NuevoUsuarioDTO();
         
         prueba.setUsername("probando");
         prueba.setEmail("probando");

@@ -9,15 +9,16 @@
     
     
     <http auto-config="true">
+        <csrf disabled="true" />
         <intercept-url pattern="/prueba" access="permitAll" />
-        <intercept-url pattern="/registro" access="permitAll" />
+        <intercept-url pattern="/perfil" method="POST" access="permitAll" />
         <intercept-url pattern="/prueba2" access="hasRole('USER')" />
         <form-login  authentication-failure-url="/prueba" />
     </http>
   
     <authentication-manager >
         <authentication-provider user-service-ref="database">
-            <password-encoder hash="sha-256" />
+            <password-encoder hash="bcrypt"/>
         </authentication-provider>
     </authentication-manager>
     

@@ -19,7 +19,10 @@ import exceptionsBusiness.PeticionYaEnviada;
 import exceptionsBusiness.UsernameNoDisponible;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import modelo.Comentario;
@@ -31,6 +34,7 @@ import modelo.PeticionAmistad;
 import modelo.Sector;
 import modelo.Usuario;
 import modelo.Via;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -281,14 +285,18 @@ public class RedSocial
      * @param _username
      * @param _password
      * @param _email 
+     * @throws java.security.NoSuchAlgorithmException 
      */
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.AltaUsuarioException.class)
-    public void altaUsuario(String _username, String _password, String _email)
+    public void altaUsuario(String _username, String _password, String _email) throws NoSuchAlgorithmException
     {
         //tranformacion de password a hash sha-256
+        String hash = BCrypt.hashpw(_password, BCrypt.gensalt());
+        
+        //registro del usuario en la bbdd
         try
         {
-            daoUsuario.guardarUsuario(new Usuario(_username, _password, _email));
+            daoUsuario.guardarUsuario(new Usuario(_username, hash, _email));
         }
         catch(RuntimeException e)
         {
@@ -299,13 +307,17 @@ public class RedSocial
     /**
      * 
      * @param _newPassword 
+     * @throws java.security.NoSuchAlgorithmException 
      */
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.CambiarPasswordException.class)
-    public void cambiarPassword(String _newPassword)
+    public void cambiarPassword(String _newPassword) throws NoSuchAlgorithmException
     {
+        //tranformacion de password a hash sha-256
+        String hash = BCrypt.hashpw(_newPassword, BCrypt.gensalt());
+        
         usuarioConectado=daoUsuario.obtenerUsuario(usuarioConectado.getUsername());
         
-        usuarioConectado.setPassword(_newPassword);
+        usuarioConectado.setPassword(hash);
         
         daoUsuario.actualizarUsuario(usuarioConectado);
     }
@@ -321,7 +333,7 @@ public class RedSocial
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.CambiarPasswordException.class)
     public void actualizarPerfilUsuario(String _nombre, String _apellidos, String _email, String dir_foto) throws IOException
     {
-        usuarioConectado=daoUsuario.obtenerUsuario(usuarioConectado.getUsername());
+        usuarioConectado=daoUsuario.obtenerUsuario(usernameConectado);
         
         usuarioConectado.setNombre(_nombre);
         usuarioConectado.setApellidos(_apellidos);
@@ -343,7 +355,7 @@ public class RedSocial
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.BajaUsuarioException.class)
     public void bajaUsuario()
     {
-        usuarioConectado=daoUsuario.obtenerUsuario(usuarioConectado.getUsername());
+        usuarioConectado=daoUsuario.obtenerUsuario(usernameConectado);
         
         usuarioConectado.setNivel(null);
         
@@ -382,7 +394,7 @@ public class RedSocial
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.EnviarPeticionAmistadException.class)
     public void enviarPeticionAmistad(String _username)
     {
-        usuarioConectado=daoUsuario.obtenerUsuario(usuarioConectado.getUsername());
+        usuarioConectado=daoUsuario.obtenerUsuario(usernameConectado);
        
         Usuario _usuario=daoUsuario.obtenerUsuario(_username);
         
@@ -407,7 +419,7 @@ public class RedSocial
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.PeticionesAmistadRecibidasException.class)
     public List<PeticionAmistad> peticionesAmistadRecibidas()
     {
-        usuarioConectado=daoUsuario.obtenerUsuario(usuarioConectado.getUsername());
+        usuarioConectado=daoUsuario.obtenerUsuario(usernameConectado);
         
         List<PeticionAmistad> peticionesRecibidas=new ArrayList();
         
@@ -433,7 +445,7 @@ public class RedSocial
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.ConfirmarPeticionException.class)
     public void confirmarPeticion(Integer _id_peticion, boolean _conf)
     {
-        usuarioConectado=daoUsuario.obtenerUsuario(usuarioConectado.getUsername());
+        usuarioConectado=daoUsuario.obtenerUsuario(usernameConectado);
        
         PeticionAmistad peticion=daoPeticionAmistad.obtenerPeticionAmistad(_id_peticion);
         
@@ -549,7 +561,7 @@ public class RedSocial
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.ComentarViaException.class)
     public void comentarVia(Integer _id_via, String _valor_comentario)
     {
-        usuarioConectado=daoUsuario.obtenerUsuario(usuarioConectado.getUsername());
+        usuarioConectado=daoUsuario.obtenerUsuario(usernameConectado);
         
         Via v=daoVia.obtenerVia(_id_via);
         
@@ -572,7 +584,7 @@ public class RedSocial
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.EditarComentarioException.class)
     public void editarComentario(Integer _id_comentario, String _valor_comentario)
     {   
-        usuarioConectado=daoUsuario.obtenerUsuario(usuarioConectado.getUsername());
+        usuarioConectado=daoUsuario.obtenerUsuario(usernameConectado);
         
         Comentario c=daoComentario.obtenerComentario(_id_comentario);
         
@@ -593,7 +605,7 @@ public class RedSocial
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.EliminarComentarioException.class)
     public void eliminarComentario(Integer _id_comentario)
     {
-        usuarioConectado=daoUsuario.obtenerUsuario(usuarioConectado.getUsername());
+        usuarioConectado=daoUsuario.obtenerUsuario(usernameConectado);
         
         Comentario c=daoComentario.obtenerComentario(_id_comentario);
         
@@ -624,7 +636,7 @@ public class RedSocial
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.RealizarViaException.class)
     public void realizarVia(Integer id_via, String _nivel_valoracion)
     {
-        usuarioConectado=daoUsuario.obtenerUsuario(usuarioConectado.getUsername());
+        usuarioConectado=daoUsuario.obtenerUsuario(usernameConectado);
         
         Nivel n=daoNivel.obtenerNivel(Nivel.nivelAsociado.valueOf(_nivel_valoracion));
         
