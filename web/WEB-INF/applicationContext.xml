@@ -46,7 +46,6 @@ and open the template in the editor.
         <property name="daoSector" ref="DAOSector" />
         <property name="daoUsuario" ref="DAOUsuario" />
         <property name="daoVia" ref="DAOVia" />
-        <property name="usernameConectado" value="dmg00024" />
     </bean>  
     
     <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">

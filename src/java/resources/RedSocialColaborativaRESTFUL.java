@@ -6,14 +6,11 @@
 package resources;
 
 import bean.RedSocial;
+import dto.ActualizarUsuarioDTO;
 import dto.NuevoUsuarioDTO;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import javax.websocket.server.PathParam;
 import modelo.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -55,12 +52,23 @@ public class RedSocialColaborativaRESTFUL
     
     /**
      * 
-     * @param _usuario 
+     * @param _usuario
+     * @throws IOException 
      */
     @RequestMapping(value = "/perfil", method = RequestMethod.PUT, consumes = "application/json")
-    public void actualizarUsuario(@RequestBody NuevoUsuarioDTO _usuario)
+    public void actualizarUsuario(@RequestBody ActualizarUsuarioDTO _usuario) throws IOException
     {
+        String usernameConectado=null;
+        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
+        if(principal instanceof UserDetails)
+        {
+            usernameConectado=((UserDetails) principal).getUsername();
+        }
+        
+        red.setUsername(usernameConectado);
+        
+        red.actualizarPerfilUsuario(_usuario.getNombre(), _usuario.getApellidos(), _usuario.getEmail(), _usuario.getDir_foto());
     }
     
     /**
@@ -68,8 +76,18 @@ public class RedSocialColaborativaRESTFUL
      * @return 
      */
     @RequestMapping(value = "/perfil", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody Usuario obtenerUsuario()
+    public @ResponseBody Usuario miPerfil()
     {
+        String usernameConectado=null;
+        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if(principal instanceof UserDetails)
+        {
+            usernameConectado=((UserDetails) principal).getUsername();
+        }
+        
+        red.setUsername(usernameConectado);
+        
         return red.getUsuarioConectado();
     }
     
@@ -78,7 +96,17 @@ public class RedSocialColaborativaRESTFUL
      */
     @RequestMapping(value = "/perfil", method = RequestMethod.DELETE)
     public void bajaUsuario()
-    {     
+    {    
+        String usernameConectado=null;
+        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if(principal instanceof UserDetails)
+        {
+            usernameConectado=((UserDetails) principal).getUsername();
+        }
+        
+        red.setUsername(usernameConectado);
+        
         red.bajaUsuario();
     }
     
