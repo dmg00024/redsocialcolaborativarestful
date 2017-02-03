@@ -51,8 +51,8 @@ and open the template in the editor.
     <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://localhost:3306/redsocialcolaborativa" />
-        <property name="username" value="dmg00024" />
-        <property name="password" value="vNspLa5H" />   
+        <property name="username" value="skala2server" />
+        <property name="password" value="skala2" />   
     </bean>
     
     <bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">

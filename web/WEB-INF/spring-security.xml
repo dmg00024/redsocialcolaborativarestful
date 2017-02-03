@@ -5,27 +5,36 @@
          xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans.xsd
             http://www.springframework.org/schema/security 
-            http://www.springframework.org/schema/security/spring-security.xsd">
+            http://www.springframework.org/schema/security/spring-security.xsd">   
     
-    
-    <http auto-config="true">
+    <http use-expressions="true" create-session="stateless" entry-point-ref="digestEntryPoint">
         <csrf disabled="true" />
         <intercept-url pattern="/prueba" access="permitAll" />
         <intercept-url pattern="/perfil" method="POST" access="permitAll" />
         <intercept-url pattern="/prueba2" access="hasRole('USER')" />
         <form-login  authentication-failure-url="/prueba" />
+        <custom-filter ref="digestFilter" after="BASIC_AUTH_FILTER"/>
     </http>
+    
+    <b:bean id="digestFilter" class="org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
+        <b:property name="userDetailsService" ref="database"/>
+        <b:property name="authenticationEntryPoint" ref="digestEntryPoint"/>
+    </b:bean>
+    
+    <b:bean id="digestEntryPoint" class="org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
+        <b:property name="realmName" value="RedSocial"/>
+        <b:property name="key" value="uniqueAndSecret"/>
+    </b:bean>
   
     <authentication-manager >
-        <authentication-provider user-service-ref="database">
-            <password-encoder hash="bcrypt"/>
+        <authentication-provider user-service-ref="database" >
+            <password-encoder hash="plaintext"/>
         </authentication-provider>
     </authentication-manager>
     
     <jdbc-user-service id="database" data-source-ref="dataSource"
     users-by-username-query="select username, password, true from usuario where username=?"
     authorities-by-username-query="select username, role from usuario where username=?" />
-       
 
 </b:beans>
 

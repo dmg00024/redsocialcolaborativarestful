@@ -296,8 +296,8 @@ public class RedSocial
     public void altaUsuario(String _username, String _password, String _email) throws NoSuchAlgorithmException
     {
         //tranformacion de password a hash sha-256
-        String hash = BCrypt.hashpw(_password, BCrypt.gensalt());
-        
+        //String hash = BCrypt.hashpw(_password, BCrypt.gensalt());
+        String hash=_password;
         //registro del usuario en la bbdd
         try
         {
