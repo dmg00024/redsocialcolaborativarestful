@@ -7,28 +7,17 @@
             http://www.springframework.org/schema/security 
             http://www.springframework.org/schema/security/spring-security.xsd">   
     
-    <http use-expressions="true" create-session="stateless" entry-point-ref="digestEntryPoint">
+    <http auto-config="true">
         <csrf disabled="true" />
         <intercept-url pattern="/prueba" access="permitAll" />
         <intercept-url pattern="/perfil" method="POST" access="permitAll" />
         <intercept-url pattern="/prueba2" access="hasRole('USER')" requires-channel="https"/>
-        <form-login  authentication-failure-url="/prueba" />
-        <custom-filter ref="digestFilter" after="BASIC_AUTH_FILTER"/>
+        <form-login  authentication-failure-url="/prueba"/>
     </http>
     
-    <b:bean id="digestFilter" class="org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
-        <b:property name="userDetailsService" ref="database"/>
-        <b:property name="authenticationEntryPoint" ref="digestEntryPoint"/>
-    </b:bean>
-    
-    <b:bean id="digestEntryPoint" class="org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
-        <b:property name="realmName" value="RedSocial"/>
-        <b:property name="key" value="uniqueAndSecret"/>
-    </b:bean>
-  
     <authentication-manager >
         <authentication-provider user-service-ref="database" >
-            <password-encoder hash="plaintext"/>
+            <password-encoder hash="bcrypt"/>
         </authentication-provider>
     </authentication-manager>
     

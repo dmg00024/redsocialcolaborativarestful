@@ -295,10 +295,8 @@ public class RedSocial
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.AltaUsuarioException.class)
     public void altaUsuario(String _username, String _password, String _email) throws NoSuchAlgorithmException
     {
-        //tranformacion de password a hash sha-256
-        //String hash = BCrypt.hashpw(_password, BCrypt.gensalt());
-        String hash=_password;
-        //registro del usuario en la bbdd
+        String hash = BCrypt.hashpw(_password, BCrypt.gensalt());
+        
         try
         {
             daoUsuario.guardarUsuario(new Usuario(_username, hash, _email));
@@ -317,7 +315,6 @@ public class RedSocial
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.CambiarPasswordException.class)
     public void cambiarPassword(String _newPassword) throws NoSuchAlgorithmException
     {
-        //tranformacion de password a hash sha-256
         String hash = BCrypt.hashpw(_newPassword, BCrypt.gensalt());
         
         usuarioConectado=daoUsuario.obtenerUsuario(usuarioConectado.getUsername());
