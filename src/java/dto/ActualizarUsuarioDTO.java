@@ -13,7 +13,8 @@ public class ActualizarUsuarioDTO
 {
     private String nombre;
     private String apellidos;
-    private String email;
+    private String mail;
+    private String confMail;
     private String dir_foto;
 
     /**
@@ -25,14 +26,14 @@ public class ActualizarUsuarioDTO
      * 
      * @param nombre
      * @param apellidos
-     * @param email
+     * @param mail
      * @param dir_foto 
      */
-    public ActualizarUsuarioDTO(String nombre, String apellidos, String email, String dir_foto) 
+    public ActualizarUsuarioDTO(String nombre, String apellidos, String mail, String dir_foto) 
     {
         this.nombre = nombre;
         this.apellidos = apellidos;
-        this.email = email;
+        this.mail = mail;
         this.dir_foto = dir_foto;
     }
 
@@ -76,18 +77,36 @@ public class ActualizarUsuarioDTO
      * 
      * @return 
      */
-    public String getEmail()
+    public String getMail()
     {
-        return email;
+        return mail;
     }
 
     /**
      * 
      * @param email 
      */
-    public void setEmail(String email)
+    public void setMail(String email)
     {
-        this.email = email;
+        this.mail = email;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public String getConfMail() 
+    {
+        return confMail;
+    }
+
+    /**
+     * 
+     * @param confMail 
+     */
+    public void setConfMail(String confMail) 
+    {
+        this.confMail = confMail;
     }
 
     /**

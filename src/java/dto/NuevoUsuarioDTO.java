@@ -13,7 +13,9 @@ public class NuevoUsuarioDTO
 {
     private String username;
     private String password;
-    private String email;
+    private String confPassword;
+    private String mail;
+    private String confMail;
    
     /**
      * 
@@ -24,7 +26,7 @@ public class NuevoUsuarioDTO
      * 
      * @return 
      */
-    public String getUsername() 
+    public String getUsername()
     {
         return username;
     }
@@ -42,7 +44,7 @@ public class NuevoUsuarioDTO
      * 
      * @return 
      */
-    public String getPassword()
+    public String getPassword() 
     {
         return password;
     }
@@ -60,18 +62,54 @@ public class NuevoUsuarioDTO
      * 
      * @return 
      */
-    public String getEmail() 
+    public String getConfPassword() 
     {
-        return email;
+        return confPassword;
     }
 
     /**
      * 
-     * @param email 
+     * @param confPassword 
      */
-    public void setEmail(String email) 
+    public void setConfPassword(String confPassword)
     {
-        this.email = email;
+        this.confPassword = confPassword;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public String getMail() 
+    {
+        return mail;
+    }
+
+    /**
+     * 
+     * @param mail 
+     */
+    public void setMail(String mail)
+    {
+        this.mail = mail;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public String getConfMail()
+    {
+        return confMail;
+    }
+
+    /**
+     * 
+     * @param confMail 
+     */
+    public void setConfMail(String confMail) 
+    {
+        this.confMail = confMail;
     }
     
 }
