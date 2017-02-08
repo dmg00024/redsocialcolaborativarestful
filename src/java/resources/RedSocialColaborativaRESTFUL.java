@@ -7,11 +7,15 @@ package resources;
 
 import bean.RedSocial;
 import dto.ActualizarUsuarioDTO;
+import dto.AmigosDTO;
 import dto.NewPasswordDTO;
 import dto.NuevoUsuarioDTO;
 import dto.PerfilDTO;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
+import modelo.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -175,7 +179,56 @@ public class RedSocialColaborativaRESTFUL
         return new PerfilDTO(red.getUsuarioConectado().getUsername(), red.getUsuarioConectado().getNombre(), red.getUsuarioConectado().getApellidos(), red.getUsuarioConectado().getNivel().getNivelAsociado().name(), red.getUsuarioConectado().getFotoperfil());
     }
     
+    /**
+     * 
+     * @return 
+     */
+    @RequestMapping(value = "/perfil/amigos", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody List<AmigosDTO> misAmigos()
+    {
+        List<AmigosDTO> amigos=new ArrayList();
+        
+        String usernameConectado=null;
+        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if(principal instanceof UserDetails)
+        {
+            usernameConectado=((UserDetails) principal).getUsername();
+        }
+        
+        red.setUsername(usernameConectado);
+        
+        for (Usuario amigo : red.getUsuarioConectado().getAmigos()) 
+        {
+            AmigosDTO aux=new AmigosDTO();
+            aux.setUsername(amigo.getUsername());
+            amigos.add(aux);
+        }
+        
+        return amigos;
+    }
     
+    /**
+     * 
+     * @param _username
+     * @return 
+     */
+    @RequestMapping(value = "/perfil/{username}/amigos", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody List<AmigosDTO> amigosPerfil(@PathVariable ("username") String _username)
+    {
+        List<AmigosDTO> amigos=new ArrayList();
+        
+        red.setUsername(_username);
+        
+        for (Usuario amigo : red.getUsuarioConectado().getAmigos()) 
+        {
+            AmigosDTO aux=new AmigosDTO();
+            aux.setUsername(amigo.getUsername());
+            amigos.add(aux);
+        }
+        
+        return amigos;
+    }
     
     
     
