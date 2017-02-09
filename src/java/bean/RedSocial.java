@@ -341,11 +341,15 @@ public class RedSocial
         usuarioConectado.setApellidos(_apellidos);
         usuarioConectado.setEmail(_email);
         
-        if(dir_foto != null)
+        if(!"".equals(dir_foto))
         {
             File foto=new File(dir_foto);
             byte[] _fotoperfil=Files.readAllBytes(foto.toPath());
             usuarioConectado.setFotoperfil(_fotoperfil);
+        }
+        else
+        {
+            usuarioConectado.setFotoperfil(null);
         }
         
         daoUsuario.actualizarUsuario(usuarioConectado);

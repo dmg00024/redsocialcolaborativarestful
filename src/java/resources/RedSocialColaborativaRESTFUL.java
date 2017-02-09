@@ -139,6 +139,11 @@ public class RedSocialColaborativaRESTFUL
             return new ResponseEntity<>("Password no confirmado",HttpStatus.BAD_REQUEST);
         }
         
+        if(_newPasswordDTO.getNewPassword().length() < 6)
+        {
+            return new ResponseEntity<>("Password con menos de 6 caracteres", HttpStatus.BAD_REQUEST);
+        }
+        
         red.setUsername(usernameConectado);
         
         red.cambiarPassword(_newPasswordDTO.getNewPassword());
@@ -229,8 +234,7 @@ public class RedSocialColaborativaRESTFUL
         
         return amigos;
     }
-    
-    
+     
     
     
     
