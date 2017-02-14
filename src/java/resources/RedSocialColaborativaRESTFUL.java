@@ -8,14 +8,20 @@ package resources;
 import bean.RedSocial;
 import dto.ActualizarUsuarioDTO;
 import dto.AmigosDTO;
+import dto.GestionarPeticionDTO;
 import dto.NewPasswordDTO;
 import dto.NuevoUsuarioDTO;
 import dto.PerfilDTO;
+import dto.PeticionDTO;
+import dto.SolicitarPeticionDTO;
+import dto.ViaDTO;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import modelo.PeticionAmistad;
 import modelo.Usuario;
+import modelo.Via;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -234,7 +240,142 @@ public class RedSocialColaborativaRESTFUL
         
         return amigos;
     }
-     
+    
+    /**
+     * 
+     * @return 
+     */
+    @RequestMapping(value = "/perfil/vias", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody List<ViaDTO> misVias()
+    {
+        List<ViaDTO> vias=new ArrayList();
+        
+        String usernameConectado=null;
+        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if(principal instanceof UserDetails)
+        {
+            usernameConectado=((UserDetails) principal).getUsername();
+        }
+        
+        red.setUsername(usernameConectado);
+        
+        for (Via via : red.getUsuarioConectado().getViasRealizadas()) 
+        {
+            ViaDTO aux=new ViaDTO(via.getId_via(), via.getNombre(), via.getSector().getNombreSector(), via.getSector().getEscuela().getNombreEscuela());
+            vias.add(aux);
+        }
+        
+        return vias;
+    }
+    
+    /**
+     * 
+     * @param _usernameConectado
+     * @return 
+     */
+    @RequestMapping(value = "/perfil/{username}/vias", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody List<ViaDTO> viasPerfil(@PathVariable("username") String _usernameConectado)
+    {
+        List<ViaDTO> vias=new ArrayList();
+        
+        String usernameConectado=null;
+        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if(principal instanceof UserDetails)
+        {
+            usernameConectado=((UserDetails) principal).getUsername();
+        }
+        
+        red.setUsername(usernameConectado);
+        
+        for (Via via : red.getUsuarioConectado().getViasRealizadas()) 
+        {
+            ViaDTO aux=new ViaDTO(via.getId_via(), via.getNombre(), via.getSector().getNombreSector(), via.getSector().getEscuela().getNombreEscuela());
+            vias.add(aux);
+        }
+        
+        return vias;
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    @RequestMapping(value = "perfil/peticiones", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody List<PeticionDTO> peticionesAmistadPendientes()
+    {
+        List<PeticionDTO> peticiones=new ArrayList();
+        
+        String usernameConectado=null;
+        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if(principal instanceof UserDetails)
+        {
+            usernameConectado=((UserDetails) principal).getUsername();
+        }
+        
+        red.setUsername(usernameConectado);
+        
+        for (PeticionAmistad peticion : red.peticionesAmistadRecibidas())
+        {
+            PeticionDTO aux=new PeticionDTO(peticion.getId_peticion(), peticion.getEmisor().getUsername());
+            
+            peticiones.add(aux);
+        }
+        
+        return peticiones;
+    }
+    
+    /**
+     * 
+     * @param _usuario 
+     */
+    @RequestMapping(value = "/perfil/peticiones", method = RequestMethod.POST, consumes = "application/json")
+    public void solicitarAmistad(@RequestBody SolicitarPeticionDTO _usuario)
+    {
+        String usernameConectado=null;
+        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if(principal instanceof UserDetails)
+        {
+            usernameConectado=((UserDetails) principal).getUsername();
+        }
+        
+        red.setUsername(usernameConectado);
+        
+        try
+        {
+            red.enviarPeticionAmistad(_usuario.getUsername());
+        }
+        catch(exceptionsBusiness.PeticionYaEnviada ex)
+        {
+            throw new exceptionsBusiness.PeticionYaEnviada();
+        }
+        
+    }
+    
+    /**
+     * 
+     * @param _peticion 
+     */
+    @RequestMapping(value = "/perfil/peticiones", method = RequestMethod.PUT, consumes = "application/json")
+    public void confirmarAmistad(@RequestBody GestionarPeticionDTO _peticion)
+    {
+        String usernameConectado=null;
+        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if(principal instanceof UserDetails)
+        {
+            usernameConectado=((UserDetails) principal).getUsername();
+        }
+        
+        red.setUsername(usernameConectado);
+        
+        red.confirmarPeticion(_peticion.getId_peticion(), _peticion.isConf());
+    }
+    
+    
     
     
     
