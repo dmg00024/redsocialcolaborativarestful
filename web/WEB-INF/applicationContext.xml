@@ -48,15 +48,11 @@ and open the template in the editor.
         <property name="daoVia" ref="DAOVia" />
     </bean>  
     
-    <bean class="java.net.URI" id="dbUrl">
-        <constructor-arg value="#{systemEnvironment['CLEARDB_DATABASE_URL']}"/>
-    </bean>
-    
     <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-        <property name="url" value="#{ 'jdbc:mysql://' + @dbUrl.getHost() + @dbUrl.getPath() }" />
-        <property name="username" value="b0a592049d60ec" />
-        <property name="password" value="6d9787e6" />   
+        <property name="url" value="jdbc:mysql://eu-cdbr-west-01.cleardb.com:3306/heroku_ad41020971fbd79?reconnect=true?zeroDateTimeBehavior=convertToNull" />
+        <property name="username" value="b1e8306e2ef879" />
+        <property name="password" value="59caf759" />   
     </bean>
     
     <bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
