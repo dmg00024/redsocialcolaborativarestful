@@ -20,6 +20,7 @@ import dto.SectorDTO;
 import dto.SectoresDTO;
 import dto.UsernameDTO;
 import dto.ViaDTO;
+import dto.ViasDTO;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -447,7 +448,7 @@ public class RedSocialColaborativaRESTFUL
     @RequestMapping(value = "/sectores/{id_sector}/vias", method = RequestMethod.POST, consumes = "application/json")
     public void nuevaVia(@PathVariable ("id_sector") Integer _id_sector, @RequestBody NuevaViaDTO _via)
     {
-        red.nuevaVia(_id_sector, _via.getNombre(), _via.getNivel_oficial());
+        red.nuevaVia(_id_sector, _via.getNombre(), _via.getNivel_oficial(), _via.getId_mapa());
     }
     
     /**
@@ -500,5 +501,30 @@ public class RedSocialColaborativaRESTFUL
         return aux_list;
     }
     
+    /**
+     * 
+     * @param _cod_sector
+     * @return 
+     */
+    @RequestMapping(value = "/vias/{cod_sector}", method = RequestMethod.GET, produces = "application/json")
+    public List<ViasDTO> viasSector(@PathVariable("cod_sector") Integer _cod_sector)
+    {
+        List<ViasDTO> vias=new ArrayList();
+        
+        for (Via via : red.viasSector(_cod_sector)) 
+        {
+            ViasDTO aux=new ViasDTO();
+            
+            aux.setId_via(via.getId_via());
+            aux.setId_mapa(via.getIdv_via());
+            aux.setNombre(via.getNombre());
+            aux.setNivel_oficial(via.getNivel().getNivelAsociado().name());
+            aux.setNivel_consensuado(via.getNivelConsensuado().getNivelAsociado().name());
+            
+            vias.add(aux);
+        }
+        
+        return vias;
+    }
     
 }

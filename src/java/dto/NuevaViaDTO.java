@@ -12,6 +12,7 @@ package dto;
 public class NuevaViaDTO
 {
     private String nombre;
+    private String id_mapa;
     private String nivel_oficial;
 
     /**
@@ -49,6 +50,24 @@ public class NuevaViaDTO
     public void setNombre(String nombre) 
     {
         this.nombre = nombre;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public String getId_mapa()
+    {
+        return id_mapa;
+    }
+
+    /**
+     * 
+     * @param id_mapa 
+     */
+    public void setId_mapa(String id_mapa) 
+    {
+        this.id_mapa = id_mapa;
     }
 
     /**
