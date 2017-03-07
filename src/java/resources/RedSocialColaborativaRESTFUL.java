@@ -8,6 +8,8 @@ package resources;
 import bean.RedSocial;
 import dto.ActualizarUsuarioDTO;
 import dto.AmigosDTO;
+import dto.ComentarioDTO;
+import dto.ComentariosDTO;
 import dto.EscuelaDTO;
 import dto.EscuelasDTO;
 import dto.GestionarPeticionDTO;
@@ -25,6 +27,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import modelo.Comentario;
 import modelo.Escuela;
 import modelo.Nivel;
 import modelo.PeticionAmistad;
@@ -527,7 +530,48 @@ public class RedSocialColaborativaRESTFUL
         return vias;
     }
     
+    /**
+     * 
+     * @param _cod_via
+     * @param _comentario 
+     */
+    @RequestMapping(value = "/comentarios/{cod_via}", method = RequestMethod.POST, produces = "application/json")
+    public void add_comentario_via(@PathVariable("cod_via") Integer _cod_via, @RequestBody ComentarioDTO _comentario)
+    {
+        String usernameConectado=null;
+        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if(principal instanceof UserDetails)
+        {
+            usernameConectado=((UserDetails) principal).getUsername();
+        }
+        
+        red.setUsername(usernameConectado);
+        
+        red.comentarVia(_cod_via, _comentario.getValor_comentario());
+    }
     
-    
+    /**
+     * 
+     * @param _cod_via
+     * @return 
+     */
+    @RequestMapping(value = "/comentarios/{cod_via}", method = RequestMethod.GET, produces = "application/json")
+    public List<ComentariosDTO> comentarios_via(@PathVariable("cod_via") Integer _cod_via)
+    {
+        List<ComentariosDTO> comentarios=new ArrayList();
+        
+        for (Comentario comentario : red.comentariosVia(_cod_via)) 
+        {
+            ComentariosDTO aux=new ComentariosDTO();
+            
+            aux.setUsername(comentario.getUsuario().getUsername());
+            aux.setValor_comentario(comentario.getComentario());
+            
+            comentarios.add(aux);
+        }
+        
+        return comentarios;
+    }
     
 }

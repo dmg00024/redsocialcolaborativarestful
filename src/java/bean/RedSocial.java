@@ -711,4 +711,28 @@ public class RedSocial
         
         return vias;
     }
+    
+    /**
+     * 
+     * @param _cod_via
+     * @return 
+     */
+    @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.ComentariosViaException.class)
+    public List<Comentario> comentariosVia(Integer _cod_via)
+    {
+        daoVia.obtenerVia(_cod_via).getComentarios().size();
+        List<Comentario> comentarios=daoVia.obtenerVia(_cod_via).getComentarios();
+        
+        return comentarios;
+    }
+    
+    /**
+     * 
+     * @param _cod_via
+     * @return 
+     */
+    public Via via(Integer _cod_via)
+    {
+        return daoVia.obtenerVia(_cod_via);
+    }
 }
