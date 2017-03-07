@@ -48,11 +48,20 @@ and open the template in the editor.
         <property name="daoVia" ref="DAOVia" />
     </bean>  
     
-    <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <!--base de datos remota en heroku-->
+    <!--<bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://eu-cdbr-west-01.cleardb.com:3306/heroku_ad41020971fbd79?reconnect=true?zeroDateTimeBehavior=convertToNull" />
         <property name="username" value="b1e8306e2ef879" />
         <property name="password" value="59caf759" />   
+    </bean>--> 
+    
+    <!--base de datos en fase de desarrollo-->
+    <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/redsocialcolaborativa" />
+        <property name="username" value="skala2server" />
+        <property name="password" value="skala2" />   
     </bean>
     
     <bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">

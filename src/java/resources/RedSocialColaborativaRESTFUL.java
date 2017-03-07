@@ -8,17 +8,21 @@ package resources;
 import bean.RedSocial;
 import dto.ActualizarUsuarioDTO;
 import dto.AmigosDTO;
+import dto.EscuelaDTO;
 import dto.GestionarPeticionDTO;
 import dto.NewPasswordDTO;
+import dto.NuevaViaDTO;
 import dto.NuevoUsuarioDTO;
 import dto.PerfilDTO;
 import dto.PeticionDTO;
-import dto.SolicitarPeticionDTO;
+import dto.SectorDTO;
+import dto.UsernameDTO;
 import dto.ViaDTO;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import modelo.Nivel;
 import modelo.PeticionAmistad;
 import modelo.Usuario;
 import modelo.Via;
@@ -174,7 +178,14 @@ public class RedSocialColaborativaRESTFUL
         
         red.setUsername(usernameConectado);
         
-        return new PerfilDTO(red.getUsuarioConectado().getUsername(), red.getUsuarioConectado().getNombre(), red.getUsuarioConectado().getApellidos(), red.getUsuarioConectado().getNivel().getNivelAsociado().name(), red.getUsuarioConectado().getFotoperfil());
+        String nivel=null;
+        
+        if(red.getUsuarioConectado().getNivel().getNivelAsociado()==Nivel.nivelAsociado._1)
+        {
+            nivel="1";
+        }
+        
+        return new PerfilDTO(red.getUsuarioConectado().getUsername(), red.getUsuarioConectado().getNombre(), red.getUsuarioConectado().getApellidos(), nivel, red.getUsuarioConectado().getFotoperfil());
     }
     
     /**
@@ -332,7 +343,7 @@ public class RedSocialColaborativaRESTFUL
      * @param _usuario 
      */
     @RequestMapping(value = "/perfil/peticiones", method = RequestMethod.POST, consumes = "application/json")
-    public void solicitarAmistad(@RequestBody SolicitarPeticionDTO _usuario)
+    public void solicitarAmistad(@RequestBody UsernameDTO _usuario)
     {
         String usernameConectado=null;
         Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -372,36 +383,17 @@ public class RedSocialColaborativaRESTFUL
         
         red.setUsername(usernameConectado);
         
-        red.confirmarPeticion(_peticion.getId_peticion(), _peticion.isConf());
-    }
-    
-    
-    
-    
-    
-    /**
-     * 
-     * @return 
-     */
-    @RequestMapping(value = "/prueba", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody NuevoUsuarioDTO prueba()
-    {
-        NuevoUsuarioDTO prueba=new NuevoUsuarioDTO();
-        
-        prueba.setUsername("probando");
-        prueba.setMail("probando");
-        prueba.setPassword("probando");
-        
-        return prueba;
+        red.confirmarPeticion(_peticion.getIdPeticion(), _peticion.isConf());
     }
     
     /**
      * 
      * @return 
      */
-    @RequestMapping(value = "/prueba2", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody String prueba2()
+    @RequestMapping(value = "/username", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody ResponseEntity<?> prueba2()
     {
+        UsernameDTO aux=new UsernameDTO();
         String usernameConectado=null;
         Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
@@ -410,7 +402,48 @@ public class RedSocialColaborativaRESTFUL
             usernameConectado=((UserDetails) principal).getUsername();
         }
         
-        return usernameConectado;
+        if(usernameConectado==null)
+        {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        
+        aux.setUsername(usernameConectado);
+        
+        return new ResponseEntity<>(aux, HttpStatus.OK);
+    }
+    
+    /**
+     * 
+     * @param _escuela 
+     * @throws java.io.IOException 
+     */
+    @RequestMapping(value = "/escuelas", method = RequestMethod.POST, consumes = "application/json")
+    public void nuevaEscuela(@RequestBody EscuelaDTO _escuela) throws IOException
+    {
+        red.nuevaEscuela(_escuela.getNombre(), _escuela.getDescripcion(), _escuela.getHorario(), _escuela.getDir_foto(), _escuela.getCod_provincia());
+    }
+    
+    /**
+     * 
+     * @param _id_escuela
+     * @param _sector 
+     * @throws java.io.IOException 
+     */
+    @RequestMapping(value = "/escuelas/{id_escuela}/sectores", method = RequestMethod.POST, consumes = "application/json")
+    public void nuevoSector(@PathVariable ("id_escuela") Integer _id_escuela, @RequestBody SectorDTO _sector) throws IOException
+    {
+        red.nuevoSector(_id_escuela, _sector.getOrientacion(), _sector.getNombre(), _sector.getDir_foto());
+    }
+    
+    /**
+     * 
+     * @param _id_sector
+     * @param _via 
+     */
+    @RequestMapping(value = "/sectores/{id_sector}/vias", method = RequestMethod.POST, consumes = "application/json")
+    public void nuevaVia(@PathVariable ("id_sector") Integer _id_sector, @RequestBody NuevaViaDTO _via)
+    {
+        red.nuevaVia(_id_sector, _via.getNombre(), _via.getNivel_oficial());
     }
     
 }

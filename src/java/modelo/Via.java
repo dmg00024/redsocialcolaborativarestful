@@ -20,6 +20,7 @@ public class Via implements Serializable
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id_via;
+    private String idv_via;
     private String nombre;
     @ManyToOne (fetch = FetchType.EAGER)
     private Nivel nivel;
@@ -66,6 +67,24 @@ public class Via implements Serializable
     public void setId_via(Integer id_via)
     {
         this.id_via = id_via;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public String getIdv_via() 
+    {
+        return idv_via;
+    }
+
+    /**
+     * 
+     * @param idv_via 
+     */
+    public void setIdv_via(String idv_via)
+    {
+        this.idv_via = idv_via;
     }
 
     /**

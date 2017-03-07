@@ -9,11 +9,11 @@ package dto;
  *
  * @author Daniel
  */
-public class SolicitarPeticionDTO 
+public class UsernameDTO 
 {
     private String username;
 
-    public SolicitarPeticionDTO()
+    public UsernameDTO()
     {
         
     }
@@ -22,7 +22,7 @@ public class SolicitarPeticionDTO
      * 
      * @param username 
      */
-    public SolicitarPeticionDTO(String username) 
+    public UsernameDTO(String username) 
     {
         this.username = username;
     }

@@ -11,7 +11,7 @@ package dto;
  */
 public class GestionarPeticionDTO 
 {
-    private Integer id_peticion;
+    private Integer idPeticion;
     private boolean conf;
 
     /**
@@ -24,12 +24,12 @@ public class GestionarPeticionDTO
 
     /**
      * 
-     * @param id_peticion
+     * @param idPeticion
      * @param conf 
      */
-    public GestionarPeticionDTO(Integer id_peticion, boolean conf) 
+    public GestionarPeticionDTO(Integer idPeticion, boolean conf) 
     {
-        this.id_peticion = id_peticion;
+        this.idPeticion = idPeticion;
         this.conf = conf;
     }
 
@@ -37,18 +37,18 @@ public class GestionarPeticionDTO
      * 
      * @return 
      */
-    public Integer getId_peticion()
+    public Integer getIdPeticion() 
     {
-        return id_peticion;
+        return idPeticion;
     }
 
     /**
      * 
-     * @param id_peticion 
+     * @param idPeticion 
      */
-    public void setId_peticion(Integer id_peticion)
+    public void setIdPeticion(Integer idPeticion) 
     {
-        this.id_peticion = id_peticion;
+        this.idPeticion = idPeticion;
     }
 
     /**
