@@ -676,8 +676,37 @@ public class RedSocial
      * @param _cod_provincia
      * @return 
      */
-    List<Escuela> escuelasProvincia(Integer _cod_provincia)
+    @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.EscuelasProvinciaException.class)
+    public List<Escuela> escuelasProvincia(Integer _cod_provincia)
     {
         return daoEscuela.obtenerEscuelasProvincia(_cod_provincia);
+    }
+    
+    /**
+     * 
+     * @param _cod_escuela
+     * @return 
+     */
+    @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.SectoresEscuelaException.class)
+    public List<Sector> sectoresEscuela(Integer _cod_escuela)
+    {
+        daoEscuela.obtenerEscuela(_cod_escuela).getSectores().size();
+        List<Sector> sectores=daoEscuela.obtenerEscuela(_cod_escuela).getSectores();
+        
+        return sectores;
+    }
+    
+    /**
+     * 
+     * @param _cod_sector
+     * @return 
+     */
+    @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.ViasSectorException.class)
+    public List<Via> viasSector(Integer _cod_sector)
+    {
+        daoSector.obtenerSector(_cod_sector).getVias().size();
+        List<Via> vias=daoSector.obtenerSector(_cod_sector).getVias();
+        
+        return vias;
     }
 }

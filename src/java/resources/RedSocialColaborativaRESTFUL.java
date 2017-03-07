@@ -9,6 +9,7 @@ import bean.RedSocial;
 import dto.ActualizarUsuarioDTO;
 import dto.AmigosDTO;
 import dto.EscuelaDTO;
+import dto.EscuelasDTO;
 import dto.GestionarPeticionDTO;
 import dto.NewPasswordDTO;
 import dto.NuevaViaDTO;
@@ -16,14 +17,17 @@ import dto.NuevoUsuarioDTO;
 import dto.PerfilDTO;
 import dto.PeticionDTO;
 import dto.SectorDTO;
+import dto.SectoresDTO;
 import dto.UsernameDTO;
 import dto.ViaDTO;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import modelo.Escuela;
 import modelo.Nivel;
 import modelo.PeticionAmistad;
+import modelo.Sector;
 import modelo.Usuario;
 import modelo.Via;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -445,5 +449,56 @@ public class RedSocialColaborativaRESTFUL
     {
         red.nuevaVia(_id_sector, _via.getNombre(), _via.getNivel_oficial());
     }
+    
+    /**
+     * 
+     * @param _cod_provincia
+     * @return 
+     */
+    @RequestMapping(value = "/escuelas/{cod_prov}", method = RequestMethod.GET, produces = "application/json")
+    public List<EscuelasDTO> escuelasProv(@PathVariable("cod_prov") Integer _cod_provincia)
+    {
+        List<EscuelasDTO> aux_list=new ArrayList();
+        
+        for (Escuela escuela : red.escuelasProvincia(_cod_provincia))
+        {
+            EscuelasDTO aux=new EscuelasDTO();
+            aux.setId_escuela(escuela.getId_escuela());
+            aux.setNombre(escuela.getNombreEscuela());
+            aux.setDescripcion(escuela.getDescripcion());
+            aux.setFoto(escuela.getFotoEscuela());
+            aux.setHorario(escuela.getHorario());
+            
+            aux_list.add(aux);
+        }
+        
+        return aux_list;
+    }
+    
+    /**
+     * 
+     * @param _cod_escuela
+     * @return 
+     */
+    @RequestMapping(value = "/sectores/{cod_escuela}", method = RequestMethod.GET, produces = "application/json")
+    public List<SectoresDTO> sectoresEsc(@PathVariable("cod_escuela") Integer _cod_escuela)
+    {
+        List<SectoresDTO> aux_list=new ArrayList();
+        
+        for (Sector sector : red.sectoresEscuela(_cod_escuela)) 
+        {
+            SectoresDTO aux=new SectoresDTO();
+            
+            aux.setId_sector(sector.getId_sector());
+            aux.setNombre(sector.getNombreSector());
+            aux.setOrientacion(sector.getOrientacion().getOrientacion().name());
+            aux.setFoto(sector.getFotoSector());
+            
+            aux_list.add(aux);
+        }
+        
+        return aux_list;
+    }
+    
     
 }
