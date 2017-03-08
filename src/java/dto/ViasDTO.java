@@ -14,6 +14,7 @@ public class ViasDTO
     private Integer id_via;
     private String id_mapa;
     private String nombre;
+    private String sector;
     private String nivel_oficial;
     private String nivel_consensuado;
 
@@ -30,14 +31,16 @@ public class ViasDTO
      * @param id_via
      * @param id_mapa
      * @param nombre
+     * @param sector
      * @param nivel_oficial
      * @param nivel_consensuado 
      */
-    public ViasDTO(Integer id_via, String id_mapa, String nombre, String nivel_oficial, String nivel_consensuado) 
+    public ViasDTO(Integer id_via, String id_mapa, String nombre, String sector, String nivel_oficial, String nivel_consensuado)
     {
         this.id_via = id_via;
         this.id_mapa = id_mapa;
         this.nombre = nombre;
+        this.sector = sector;
         this.nivel_oficial = nivel_oficial;
         this.nivel_consensuado = nivel_consensuado;
     }
@@ -96,6 +99,24 @@ public class ViasDTO
     public void setNombre(String nombre)
     {
         this.nombre = nombre;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public String getSector() 
+    {
+        return sector;
+    }
+
+    /**
+     * 
+     * @param sector 
+     */
+    public void setSector(String sector) 
+    {
+        this.sector = sector;
     }
 
     /**

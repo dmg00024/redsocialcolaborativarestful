@@ -21,17 +21,29 @@ import dto.PeticionDTO;
 import dto.SectorDTO;
 import dto.SectoresDTO;
 import dto.UsernameDTO;
-import dto.ViaDTO;
 import dto.ViasDTO;
+import exceptionsBusiness.ErrorEnvioEmail;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import modelo.Comentario;
 import modelo.Escuela;
 import modelo.Nivel;
 import modelo.PeticionAmistad;
 import modelo.Sector;
+import modelo.Token;
 import modelo.Usuario;
 import modelo.Via;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +51,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,13 +72,12 @@ public class RedSocialColaborativaRESTFUL
     
     /**
      * 
-     * @param _usuario 
-     * @return  
-     * @throws java.security.NoSuchAlgorithmException 
+     * @param _usuario
+     * @return 
      */
-    @RequestMapping(value = "/perfil", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public ResponseEntity<String> altaUsuario(@RequestBody NuevoUsuarioDTO _usuario) throws NoSuchAlgorithmException
-    {   
+    @RequestMapping(value = "/perfil/acceso", method = RequestMethod.POST, consumes = "application/json")
+    public ResponseEntity<String> solicitudAcceso(@RequestBody NuevoUsuarioDTO _usuario)
+    {
         if(!_usuario.getMail().equals(_usuario.getConfMail()))
         {
             return new ResponseEntity<>("Email no confirmado",HttpStatus.BAD_REQUEST);
@@ -77,14 +89,35 @@ public class RedSocialColaborativaRESTFUL
         
         try
         {
-            red.altaUsuario(_usuario.getUsername(), _usuario.getPassword(), _usuario.getMail());
+            red.solicitarAcceso(_usuario.getUsername(), _usuario.getMail(), _usuario.getPassword());
         }
-        catch(RuntimeException ex)
+        catch(RuntimeException e)
         {
             throw new exceptionsBusiness.UsernameNoDisponible();
         }
         
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
+    /**
+     * 
+     * @param _token
+     * @return
+     * @throws NoSuchAlgorithmException 
+     */
+    @RequestMapping(value = "/perfil/acceso/{token}", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    public ResponseEntity<String> altaUsuario(@PathVariable ("token") String _token) throws NoSuchAlgorithmException
+    {
+        try
+        {
+            red.altaUsuario(_token);
+        }
+        catch(RuntimeException ex)
+        {
+            throw new exceptionsBusiness.TokenCaducado();
+        }
+        
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     
     /**
@@ -132,7 +165,7 @@ public class RedSocialColaborativaRESTFUL
         
         red.actualizarPerfilUsuario(_usuario.getNombre(), _usuario.getApellidos(), _usuario.getMail(), _usuario.getDir_foto());
         
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     
     /**
@@ -166,7 +199,7 @@ public class RedSocialColaborativaRESTFUL
         
         red.cambiarPassword(_newPasswordDTO.getNewPassword());
         
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     
     /**
@@ -265,9 +298,9 @@ public class RedSocialColaborativaRESTFUL
      * @return 
      */
     @RequestMapping(value = "/perfil/vias", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody List<ViaDTO> misVias()
+    public @ResponseBody List<ViasDTO> misVias()
     {
-        List<ViaDTO> vias=new ArrayList();
+        List<ViasDTO> vias=new ArrayList();
         
         String usernameConectado=null;
         Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -281,7 +314,15 @@ public class RedSocialColaborativaRESTFUL
         
         for (Via via : red.getUsuarioConectado().getViasRealizadas()) 
         {
-            ViaDTO aux=new ViaDTO(via.getId_via(), via.getNombre(), via.getSector().getNombreSector(), via.getSector().getEscuela().getNombreEscuela());
+            ViasDTO aux=new ViasDTO();
+            
+            aux.setId_via(via.getId_via());
+            aux.setId_mapa(via.getIdv_via());
+            aux.setNombre(via.getNombre());
+            aux.setSector(via.getSector().getNombreSector());
+            aux.setNivel_oficial(via.getNivel().getNivelAsociado().name());
+            aux.setNivel_consensuado(via.getNivelConsensuado().getNivelAsociado().name());
+            
             vias.add(aux);
         }
         
@@ -294,9 +335,9 @@ public class RedSocialColaborativaRESTFUL
      * @return 
      */
     @RequestMapping(value = "/perfil/{username}/vias", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody List<ViaDTO> viasPerfil(@PathVariable("username") String _usernameConectado)
+    public @ResponseBody List<ViasDTO> viasPerfil(@PathVariable("username") String _usernameConectado)
     {
-        List<ViaDTO> vias=new ArrayList();
+        List<ViasDTO> vias=new ArrayList();
         
         String usernameConectado=null;
         Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -310,7 +351,15 @@ public class RedSocialColaborativaRESTFUL
         
         for (Via via : red.getUsuarioConectado().getViasRealizadas()) 
         {
-            ViaDTO aux=new ViaDTO(via.getId_via(), via.getNombre(), via.getSector().getNombreSector(), via.getSector().getEscuela().getNombreEscuela());
+            ViasDTO aux=new ViasDTO();
+            
+            aux.setId_via(via.getId_via());
+            aux.setId_mapa(via.getIdv_via());
+            aux.setNombre(via.getNombre());
+            aux.setSector(via.getSector().getNombreSector());
+            aux.setNivel_oficial(via.getNivel().getNivelAsociado().name());
+            aux.setNivel_consensuado(via.getNivelConsensuado().getNivelAsociado().name());
+            
             vias.add(aux);
         }
         
@@ -495,6 +544,7 @@ public class RedSocialColaborativaRESTFUL
             
             aux.setId_sector(sector.getId_sector());
             aux.setNombre(sector.getNombreSector());
+            aux.setEscuela(sector.getEscuela().getNombreEscuela());
             aux.setOrientacion(sector.getOrientacion().getOrientacion().name());
             aux.setFoto(sector.getFotoSector());
             
@@ -521,6 +571,7 @@ public class RedSocialColaborativaRESTFUL
             aux.setId_via(via.getId_via());
             aux.setId_mapa(via.getIdv_via());
             aux.setNombre(via.getNombre());
+            aux.setSector(via.getSector().getNombreSector());
             aux.setNivel_oficial(via.getNivel().getNivelAsociado().name());
             aux.setNivel_consensuado(via.getNivelConsensuado().getNivelAsociado().name());
             

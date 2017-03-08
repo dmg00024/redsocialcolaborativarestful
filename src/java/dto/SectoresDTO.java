@@ -14,6 +14,7 @@ public class SectoresDTO
     private Integer id_sector;
     private String orientacion;
     private String nombre;
+    private String escuela;
     private byte[] foto;
 
     /**
@@ -91,6 +92,24 @@ public class SectoresDTO
     public void setNombre(String nombre) 
     {
         this.nombre = nombre;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public String getEscuela()
+    {
+        return escuela;
+    }
+
+    /**
+     * 
+     * @param escuela 
+     */
+    public void setEscuela(String escuela) 
+    {
+        this.escuela = escuela;
     }
     
     /**

@@ -12,17 +12,32 @@ import dao.DAONivel;
 import dao.DAOOrientacion;
 import dao.DAOPeticionAmistad;
 import dao.DAOSector;
+import dao.DAOToken;
 import dao.DAOUsuario;
 import dao.DAOVia;
 import exceptionsBusiness.ComentarioNoDisponible;
+import exceptionsBusiness.ErrorEnvioEmail;
 import exceptionsBusiness.PeticionYaEnviada;
+import exceptionsBusiness.TokenCaducado;
 import exceptionsBusiness.UsernameNoDisponible;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Properties;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import modelo.Comentario;
 import modelo.Escuela;
 import modelo.Provincia;
@@ -30,6 +45,7 @@ import modelo.Nivel;
 import modelo.Orientacion;
 import modelo.PeticionAmistad;
 import modelo.Sector;
+import modelo.Token;
 import modelo.Usuario;
 import modelo.Via;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -51,6 +67,7 @@ public class RedSocial
     private DAOSector daoSector;
     private DAOUsuario daoUsuario;
     private DAOVia daoVia;
+    private DAOToken daoToken;
     private Usuario usuarioConectado;
     private String username;
     
@@ -245,6 +262,24 @@ public class RedSocial
      * 
      * @return 
      */
+    public DAOToken getDaoToken() 
+    {
+        return daoToken;
+    }
+
+    /**
+     * 
+     * @param daoToken 
+     */
+    public void setDaoToken(DAOToken daoToken)
+    {
+        this.daoToken = daoToken;
+    }
+
+    /**
+     * 
+     * @return 
+     */
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.GetUsuarioConectadoException.class)
     public Usuario getUsuarioConectado()
     {
@@ -288,18 +323,109 @@ public class RedSocial
     /**
      * 
      * @param _username
-     * @param _password
-     * @param _email 
-     * @throws java.security.NoSuchAlgorithmException 
+     * @param _email
+     * @param _password 
+     */
+    @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.ComentariosViaException.class)
+    public void solicitarAcceso(String _username, String _email, String _password)
+    {
+        if(daoUsuario.obtenerUsuario(_username) != null)
+        {
+            throw new exceptionsBusiness.UsernameNoDisponible();
+        }
+        
+        String hash = BCrypt.hashpw(_password, BCrypt.gensalt());
+        
+        Token token = new Token(_username, _email, hash);
+        daoToken.guardarToken(token);
+
+        //enviar token de acceso a la direccion email
+        
+        String correoEnvia = "skala2climbing@gmail.com";
+        String claveCorreo = "vNspLa5H";
+
+        // La configuración para enviar correo
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.port", "587");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.user", correoEnvia);
+        properties.put("mail.password", claveCorreo);
+
+        // Obtener la sesion
+        Session session = Session.getInstance(properties, null);
+
+        try {
+            // Crear el cuerpo del mensaje
+            MimeMessage mimeMessage = new MimeMessage(session);
+
+            // Agregar quien envía el correo
+            mimeMessage.setFrom(new InternetAddress(correoEnvia, "Skala2Climbing"));
+
+            // Los destinatarios
+            InternetAddress[] internetAddresses = 
+            {
+                new InternetAddress(token.getEmail())
+            };
+
+            // Agregar los destinatarios al mensaje
+            mimeMessage.setRecipients(Message.RecipientType.TO,
+                    internetAddresses);
+
+            // Agregar el asunto al correo
+            mimeMessage.setSubject("Confirmación de registro");
+
+            // Creo la parte del mensaje
+            MimeBodyPart mimeBodyPart = new MimeBodyPart();
+            mimeBodyPart.setText("Su token de acceso es: "+token.getToken());
+            //mimeBodyPart.setText("Confirme su registro pulsando en el siguiente enlace: "+"Enlace aún no disponible");
+
+            // Crear el multipart para agregar la parte del mensaje anterior
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(mimeBodyPart);
+
+            // Agregar el multipart al cuerpo del mensaje
+            mimeMessage.setContent(multipart);
+
+            // Enviar el mensaje
+            Transport transport = session.getTransport("smtp");
+            transport.connect(correoEnvia, claveCorreo);
+            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+            transport.close();
+
+        } 
+        catch (UnsupportedEncodingException | MessagingException ex) 
+        {
+            throw new ErrorEnvioEmail();
+        }
+        
+    }
+    
+    /**
+     * 
+     * @param _token
+     * @throws NoSuchAlgorithmException 
      */
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.AltaUsuarioException.class)
-    public void altaUsuario(String _username, String _password, String _email) throws NoSuchAlgorithmException
+    public void altaUsuario(String _token) throws NoSuchAlgorithmException
     {
-        String hash = BCrypt.hashpw(_password, BCrypt.gensalt());
+        Token token=daoToken.obtenerToken(_token);
+
+        //comprobar caducidad del token y lanzar exception
+        Calendar fecha_actual=Calendar.getInstance();
+        Calendar fecha_token=token.getFecha();
+        
+        long diferencia=fecha_token.getTimeInMillis()-fecha_actual.getTimeInMillis();
+        
+        if(diferencia > 1800000)
+        {
+            throw new TokenCaducado();
+        }
         
         try
         {
-            daoUsuario.guardarUsuario(new Usuario(_username, hash, _email));
+            daoUsuario.guardarUsuario(new Usuario(token.getUsername(), token.getPassword(), token.getEmail()));
         }
         catch(RuntimeException e)
         {
@@ -725,14 +851,5 @@ public class RedSocial
         
         return comentarios;
     }
-    
-    /**
-     * 
-     * @param _cod_via
-     * @return 
-     */
-    public Via via(Integer _cod_via)
-    {
-        return daoVia.obtenerVia(_cod_via);
-    }
+   
 }
