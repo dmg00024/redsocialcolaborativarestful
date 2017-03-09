@@ -30,6 +30,11 @@ public class Via implements Serializable
     private final List<Comentario> comentarios;
     @ManyToOne (fetch = FetchType.EAGER)
     private Sector sector;
+    private Integer contador;
+    @ManyToMany
+    private final List<Puntuacion> puntuaciones;
+    @ManyToMany
+    private final List<PuntuacionNivel> puntuaciones_nivel;
     
     /**
      * 
@@ -37,6 +42,9 @@ public class Via implements Serializable
     public Via()
     {
         comentarios=new ArrayList();
+        contador=0;
+        puntuaciones=new ArrayList();
+        puntuaciones_nivel=new ArrayList();
     }
 
     /**
@@ -49,6 +57,9 @@ public class Via implements Serializable
         comentarios=new ArrayList();
         this.nombre = nombre;
         this.nivel = nivel;
+        contador=0;
+        puntuaciones=new ArrayList();
+        puntuaciones_nivel=new ArrayList();
     }
 
     /**
@@ -166,6 +177,42 @@ public class Via implements Serializable
     public List<Comentario> getComentarios() 
     {
         return comentarios;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public Integer getContador() 
+    {
+        return contador;
+    }
+
+    /**
+     * 
+     * @param contador 
+     */
+    public void setContador(Integer contador) 
+    {
+        this.contador = contador;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public List<Puntuacion> getPuntuaciones()
+    {
+        return puntuaciones;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public List<PuntuacionNivel> getPuntuaciones_nivel() 
+    {
+        return puntuaciones_nivel;
     }
     
 }

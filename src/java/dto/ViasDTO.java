@@ -17,6 +17,7 @@ public class ViasDTO
     private String sector;
     private String nivel_oficial;
     private String nivel_consensuado;
+    private Integer contador;
 
     /**
      * 
@@ -153,6 +154,24 @@ public class ViasDTO
     public void setNivel_consensuado(String nivel_consensuado) 
     {
         this.nivel_consensuado = nivel_consensuado;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public Integer getContador() 
+    {
+        return contador;
+    }
+
+    /**
+     * 
+     * @param contador 
+     */
+    public void setContador(Integer contador)
+    {
+        this.contador = contador;
     }
     
 }

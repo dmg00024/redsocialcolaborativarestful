@@ -765,14 +765,17 @@ public class RedSocial
     /**
      * 
      * @param id_via
-     * @param _nivel_valoracion 
+     * @param _nivel_valoracion
+     * @param _valoracion 
      */
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.RealizarViaException.class)
-    public void realizarVia(Integer id_via, String _nivel_valoracion)
+    public void realizarVia(Integer id_via, Nivel _nivel_valoracion, Integer _valoracion)
     {
+        //faltan daos
+        
         usuarioConectado=daoUsuario.obtenerUsuario(username);
         
-        Nivel n=daoNivel.obtenerNivel(Nivel.nivelAsociado.valueOf(_nivel_valoracion));
+        Nivel n=daoNivel.obtenerNivel(_nivel_valoracion.getNivelAsociado());
         
         Via v=daoVia.obtenerVia(id_via);
         
@@ -780,18 +783,34 @@ public class RedSocial
         {
             usuarioConectado.getViasRealizadas().remove(v);
             usuarioConectado.getViasRealizadas().add(v);
-            usuarioConectado.setNivel(v.getNivel());
+            v.setContador(v.getContador()+1);
+            
+            if(usuarioConectado.getNivel().getNivelAsociado().compareTo(v.getNivel().getNivelAsociado()) > 0)
+            {
+                usuarioConectado.setNivel(v.getNivel());
+            }            
             
             //aquí se debería aplicar el algoritmo de reestimacion colaborativa
+            
+            
+            
             v.setNivelConsensuado(n);
             daoVia.actualizarVia(v);
         }
         else
         {
             usuarioConectado.getViasRealizadas().add(v);
-            usuarioConectado.setNivel(v.getNivel());
+            
+            v.setContador(v.getContador()+1);
+            
+            if(usuarioConectado.getNivel().getNivelAsociado().compareTo(v.getNivel().getNivelAsociado()) > 0)
+            {
+                usuarioConectado.setNivel(v.getNivel());
+            } 
             
             //aquí se debería aplicar el algoritmo de reestimacion colaborativa
+            
+            
             v.setNivelConsensuado(n);
             daoVia.actualizarVia(v);
         }

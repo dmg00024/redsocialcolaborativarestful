@@ -319,6 +319,107 @@ public class RedSocialColaborativaRESTFUL
     {
         red.setUsername(_username);
         
+        String nivel=null;
+        
+        if (null != red.getUsuarioConectado().getNivel().getNivelAsociado()) 
+        {
+            switch (red.getUsuarioConectado().getNivel().getNivelAsociado()) 
+            {
+                case _1:
+                    nivel="1";
+                    break;
+                case _2:
+                    nivel="2";
+                    break;
+                case _3:
+                    nivel="3";
+                    break;
+                case _4:
+                    nivel="4";
+                    break;
+                case _5:
+                    nivel="5";
+                    break;
+                case _5m:
+                    nivel="5+";
+                    break;
+                case _6a:
+                    nivel="6a";
+                    break;
+                case _6am:
+                    nivel="6a+";
+                    break;
+                case _6b:
+                    nivel="6b";
+                    break;
+                case _6bm:
+                    nivel="6b+";
+                    break;
+                case _6c:
+                    nivel="6c";
+                    break;
+                case _6cm:
+                    nivel="6c+";
+                    break;
+                case _7a:
+                    nivel="7a";
+                    break;
+                case _7am:
+                    nivel="7a+";
+                    break;
+                case _7b:
+                    nivel="7b";
+                    break;
+                case _7bm:
+                    nivel="7b+";
+                    break;
+                case _7c:
+                    nivel="7c";
+                    break;
+                case _7cm:
+                    nivel="7c+";
+                    break;
+                case _8a:
+                    nivel="8a";
+                    break;
+                case _8am:
+                    nivel="8a+";
+                    break;
+                case _8b:
+                    nivel="8b";
+                    break;
+                case _8bm:
+                    nivel="8b+";
+                    break;
+                case _8c:
+                    nivel="8c";
+                    break;
+                case _8cm:
+                    nivel="8c+";
+                    break;
+                case _9a:
+                    nivel="9a";
+                    break;
+                case _9am:
+                    nivel="9a+";
+                    break;
+                case _9b:
+                    nivel="9b";
+                    break;
+                case _9bm:
+                    nivel="9b+";
+                    break;
+                case _9c:
+                    nivel="9c";
+                    break;
+                case _9cm:
+                    nivel="9c+";
+                    break;
+                default:
+                    break;
+            }
+        }
+        
         return new PerfilDTO(red.getUsuarioConectado().getUsername(), red.getUsuarioConectado().getNombre(), red.getUsuarioConectado().getApellidos(), red.getUsuarioConectado().getNivel().getNivelAsociado().name(), red.getUsuarioConectado().getFotoperfil());
     }
     
@@ -400,8 +501,199 @@ public class RedSocialColaborativaRESTFUL
             aux.setId_mapa(via.getIdv_via());
             aux.setNombre(via.getNombre());
             aux.setSector(via.getSector().getNombreSector());
-            aux.setNivel_oficial(via.getNivel().getNivelAsociado().name());
-            aux.setNivel_consensuado(via.getNivelConsensuado().getNivelAsociado().name());
+            aux.setContador(via.getContador());
+            
+            switch(via.getNivel().getNivelAsociado())
+            {
+                case _1:
+                    aux.setNivel_oficial("1");
+                    break;
+                case _2:
+                    aux.setNivel_oficial("2");
+                    break;
+                case _3:
+                    aux.setNivel_oficial("3");
+                    break;
+                case _4:
+                    aux.setNivel_oficial("4");
+                    break;
+                case _5:
+                    aux.setNivel_oficial("5");
+                    break;
+                case _5m:
+                    aux.setNivel_oficial("5+");
+                    break;
+                case _6a:
+                    aux.setNivel_oficial("6a");
+                    break;
+                case _6am:
+                    aux.setNivel_oficial("6a+");
+                    break;
+                case _6b:
+                    aux.setNivel_oficial("6b");
+                    break;
+                case _6bm:
+                    aux.setNivel_oficial("6b+");
+                    break;
+                case _6c:
+                    aux.setNivel_oficial("6c");
+                    break;
+                case _6cm:
+                    aux.setNivel_oficial("6c+");
+                    break;
+                case _7a:
+                    aux.setNivel_oficial("7a");
+                    break;
+                case _7am:
+                    aux.setNivel_oficial("7a+");
+                    break;
+                case _7b:
+                    aux.setNivel_oficial("7b");
+                    break;
+                case _7bm:
+                    aux.setNivel_oficial("7b+");
+                    break;
+                case _7c:
+                    aux.setNivel_oficial("7c");
+                    break;
+                case _7cm:
+                    aux.setNivel_oficial("7c+");
+                    break;
+                case _8a:
+                    aux.setNivel_oficial("8a");
+                    break;
+                case _8am:
+                    aux.setNivel_oficial("8a+");
+                    break;
+                case _8b:
+                    aux.setNivel_oficial("8b");
+                    break;
+                case _8bm:
+                    aux.setNivel_oficial("8b+");
+                    break;
+                case _8c:
+                    aux.setNivel_oficial("8c");
+                    break;
+                case _8cm:
+                    aux.setNivel_oficial("8c+");
+                    break;
+                case _9a:
+                    aux.setNivel_oficial("9a");
+                    break;
+                case _9am:
+                    aux.setNivel_oficial("9a+");
+                    break;
+                case _9b:
+                    aux.setNivel_oficial("9b");
+                    break;
+                case _9bm:
+                    aux.setNivel_oficial("9b+");
+                    break;
+                case _9c:
+                    aux.setNivel_oficial("9c");
+                    break;
+                case _9cm:
+                    aux.setNivel_oficial("9c+");
+                    break;
+                default:
+                    break;
+            }
+            
+            switch(via.getNivel().getNivelAsociado())
+            {
+                case _1:
+                    aux.setNivel_consensuado("1");
+                    break;
+                case _2:
+                    aux.setNivel_consensuado("2");
+                    break;
+                case _3:
+                    aux.setNivel_consensuado("3");
+                    break;
+                case _4:
+                    aux.setNivel_consensuado("4");
+                    break;
+                case _5:
+                    aux.setNivel_consensuado("5");
+                    break;
+                case _5m:
+                    aux.setNivel_consensuado("5+");
+                    break;
+                case _6a:
+                    aux.setNivel_consensuado("6a");
+                    break;
+                case _6am:
+                    aux.setNivel_consensuado("6a+");
+                    break;
+                case _6b:
+                    aux.setNivel_consensuado("6b");
+                    break;
+                case _6bm:
+                    aux.setNivel_consensuado("6b+");
+                    break;
+                case _6c:
+                    aux.setNivel_consensuado("6c");
+                    break;
+                case _6cm:
+                    aux.setNivel_consensuado("6c+");
+                    break;
+                case _7a:
+                    aux.setNivel_consensuado("7a");
+                    break;
+                case _7am:
+                    aux.setNivel_consensuado("7a+");
+                    break;
+                case _7b:
+                    aux.setNivel_consensuado("7b");
+                    break;
+                case _7bm:
+                    aux.setNivel_consensuado("7b+");
+                    break;
+                case _7c:
+                    aux.setNivel_consensuado("7c");
+                    break;
+                case _7cm:
+                    aux.setNivel_consensuado("7c+");
+                    break;
+                case _8a:
+                    aux.setNivel_consensuado("8a");
+                    break;
+                case _8am:
+                    aux.setNivel_consensuado("8a+");
+                    break;
+                case _8b:
+                    aux.setNivel_consensuado("8b");
+                    break;
+                case _8bm:
+                    aux.setNivel_consensuado("8b+");
+                    break;
+                case _8c:
+                    aux.setNivel_consensuado("8c");
+                    break;
+                case _8cm:
+                    aux.setNivel_consensuado("8c+");
+                    break;
+                case _9a:
+                    aux.setNivel_consensuado("9a");
+                    break;
+                case _9am:
+                    aux.setNivel_consensuado("9a+");
+                    break;
+                case _9b:
+                    aux.setNivel_consensuado("9b");
+                    break;
+                case _9bm:
+                    aux.setNivel_consensuado("9b+");
+                    break;
+                case _9c:
+                    aux.setNivel_consensuado("9c");
+                    break;
+                case _9cm:
+                    aux.setNivel_consensuado("9c+");
+                    break;
+                default:
+                    break;
+            }
             
             vias.add(aux);
         }
@@ -437,8 +729,199 @@ public class RedSocialColaborativaRESTFUL
             aux.setId_mapa(via.getIdv_via());
             aux.setNombre(via.getNombre());
             aux.setSector(via.getSector().getNombreSector());
-            aux.setNivel_oficial(via.getNivel().getNivelAsociado().name());
-            aux.setNivel_consensuado(via.getNivelConsensuado().getNivelAsociado().name());
+            aux.setContador(via.getContador());
+            
+            switch(via.getNivel().getNivelAsociado())
+            {
+                case _1:
+                    aux.setNivel_oficial("1");
+                    break;
+                case _2:
+                    aux.setNivel_oficial("2");
+                    break;
+                case _3:
+                    aux.setNivel_oficial("3");
+                    break;
+                case _4:
+                    aux.setNivel_oficial("4");
+                    break;
+                case _5:
+                    aux.setNivel_oficial("5");
+                    break;
+                case _5m:
+                    aux.setNivel_oficial("5+");
+                    break;
+                case _6a:
+                    aux.setNivel_oficial("6a");
+                    break;
+                case _6am:
+                    aux.setNivel_oficial("6a+");
+                    break;
+                case _6b:
+                    aux.setNivel_oficial("6b");
+                    break;
+                case _6bm:
+                    aux.setNivel_oficial("6b+");
+                    break;
+                case _6c:
+                    aux.setNivel_oficial("6c");
+                    break;
+                case _6cm:
+                    aux.setNivel_oficial("6c+");
+                    break;
+                case _7a:
+                    aux.setNivel_oficial("7a");
+                    break;
+                case _7am:
+                    aux.setNivel_oficial("7a+");
+                    break;
+                case _7b:
+                    aux.setNivel_oficial("7b");
+                    break;
+                case _7bm:
+                    aux.setNivel_oficial("7b+");
+                    break;
+                case _7c:
+                    aux.setNivel_oficial("7c");
+                    break;
+                case _7cm:
+                    aux.setNivel_oficial("7c+");
+                    break;
+                case _8a:
+                    aux.setNivel_oficial("8a");
+                    break;
+                case _8am:
+                    aux.setNivel_oficial("8a+");
+                    break;
+                case _8b:
+                    aux.setNivel_oficial("8b");
+                    break;
+                case _8bm:
+                    aux.setNivel_oficial("8b+");
+                    break;
+                case _8c:
+                    aux.setNivel_oficial("8c");
+                    break;
+                case _8cm:
+                    aux.setNivel_oficial("8c+");
+                    break;
+                case _9a:
+                    aux.setNivel_oficial("9a");
+                    break;
+                case _9am:
+                    aux.setNivel_oficial("9a+");
+                    break;
+                case _9b:
+                    aux.setNivel_oficial("9b");
+                    break;
+                case _9bm:
+                    aux.setNivel_oficial("9b+");
+                    break;
+                case _9c:
+                    aux.setNivel_oficial("9c");
+                    break;
+                case _9cm:
+                    aux.setNivel_oficial("9c+");
+                    break;
+                default:
+                    break;
+            }
+            
+            switch(via.getNivel().getNivelAsociado())
+            {
+                case _1:
+                    aux.setNivel_consensuado("1");
+                    break;
+                case _2:
+                    aux.setNivel_consensuado("2");
+                    break;
+                case _3:
+                    aux.setNivel_consensuado("3");
+                    break;
+                case _4:
+                    aux.setNivel_consensuado("4");
+                    break;
+                case _5:
+                    aux.setNivel_consensuado("5");
+                    break;
+                case _5m:
+                    aux.setNivel_consensuado("5+");
+                    break;
+                case _6a:
+                    aux.setNivel_consensuado("6a");
+                    break;
+                case _6am:
+                    aux.setNivel_consensuado("6a+");
+                    break;
+                case _6b:
+                    aux.setNivel_consensuado("6b");
+                    break;
+                case _6bm:
+                    aux.setNivel_consensuado("6b+");
+                    break;
+                case _6c:
+                    aux.setNivel_consensuado("6c");
+                    break;
+                case _6cm:
+                    aux.setNivel_consensuado("6c+");
+                    break;
+                case _7a:
+                    aux.setNivel_consensuado("7a");
+                    break;
+                case _7am:
+                    aux.setNivel_consensuado("7a+");
+                    break;
+                case _7b:
+                    aux.setNivel_consensuado("7b");
+                    break;
+                case _7bm:
+                    aux.setNivel_consensuado("7b+");
+                    break;
+                case _7c:
+                    aux.setNivel_consensuado("7c");
+                    break;
+                case _7cm:
+                    aux.setNivel_consensuado("7c+");
+                    break;
+                case _8a:
+                    aux.setNivel_consensuado("8a");
+                    break;
+                case _8am:
+                    aux.setNivel_consensuado("8a+");
+                    break;
+                case _8b:
+                    aux.setNivel_consensuado("8b");
+                    break;
+                case _8bm:
+                    aux.setNivel_consensuado("8b+");
+                    break;
+                case _8c:
+                    aux.setNivel_consensuado("8c");
+                    break;
+                case _8cm:
+                    aux.setNivel_consensuado("8c+");
+                    break;
+                case _9a:
+                    aux.setNivel_consensuado("9a");
+                    break;
+                case _9am:
+                    aux.setNivel_consensuado("9a+");
+                    break;
+                case _9b:
+                    aux.setNivel_consensuado("9b");
+                    break;
+                case _9bm:
+                    aux.setNivel_consensuado("9b+");
+                    break;
+                case _9c:
+                    aux.setNivel_consensuado("9c");
+                    break;
+                case _9cm:
+                    aux.setNivel_consensuado("9c+");
+                    break;
+                default:
+                    break;
+            }
             
             vias.add(aux);
         }
@@ -751,6 +1234,7 @@ public class RedSocialColaborativaRESTFUL
             aux.setId_mapa(via.getIdv_via());
             aux.setNombre(via.getNombre());
             aux.setSector(via.getSector().getNombreSector());
+            aux.setContador(via.getContador());
             
             switch(via.getNivel().getNivelAsociado())
             {
@@ -992,6 +1476,12 @@ public class RedSocialColaborativaRESTFUL
         }
         
         return comentarios;
+    }
+    
+    @RequestMapping(value = "/perfil/vias/{id_via}", method = RequestMethod.POST, consumes = "application/json")
+    public void realizarVia(@PathVariable ("id_via") String _id_via)
+    {
+        
     }
     
 }
