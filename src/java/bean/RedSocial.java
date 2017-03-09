@@ -669,9 +669,9 @@ public class RedSocial
      * @param id_mapa 
      */
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.NuevaViaException.class)
-    public void nuevaVia(Integer _id_sector, String _nombre, String _nivel_oficial, String id_mapa)
+    public void nuevaVia(Integer _id_sector, String _nombre, Nivel _nivel_oficial, String id_mapa)
     {
-        Nivel n=daoNivel.obtenerNivel(Nivel.nivelAsociado.valueOf(_nivel_oficial));
+        Nivel n=daoNivel.obtenerNivel(_nivel_oficial.getNivelAsociado());
         
         Via v=new Via(_nombre, n);
         
