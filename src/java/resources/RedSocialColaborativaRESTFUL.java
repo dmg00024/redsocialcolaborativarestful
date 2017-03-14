@@ -21,6 +21,7 @@ import dto.PeticionDTO;
 import dto.SectorDTO;
 import dto.SectoresDTO;
 import dto.UsernameDTO;
+import dto.ValorarViaDTO;
 import dto.ViasDTO;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -1479,8 +1480,121 @@ public class RedSocialColaborativaRESTFUL
     }
     
     @RequestMapping(value = "/perfil/vias/{id_via}", method = RequestMethod.POST, consumes = "application/json")
-    public void realizarVia(@PathVariable ("id_via") String _id_via)
+    public void realizarVia(@PathVariable ("id_via") Integer _id_via, @RequestBody ValorarViaDTO _valoracion)
     {
+        String usernameConectado=null;
+        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if(principal instanceof UserDetails)
+        {
+            usernameConectado=((UserDetails) principal).getUsername();
+        }
+        
+        red.setUsername(usernameConectado);
+        
+        
+        Nivel nivel=new Nivel();
+        
+        switch (_valoracion.getNivel())
+        {
+            case "1":
+                nivel.setNivel(Nivel.nivelAsociado._1);
+                break;
+            case "2":
+                nivel.setNivel(Nivel.nivelAsociado._2);
+                break;
+            case "3":
+                nivel.setNivel(Nivel.nivelAsociado._3);
+                break;
+            case "4":
+                nivel.setNivel(Nivel.nivelAsociado._4);
+                break;
+            case "5":
+                nivel.setNivel(Nivel.nivelAsociado._5);
+                break;
+            case "5+":
+                nivel.setNivel(Nivel.nivelAsociado._5m);
+                break;
+            case "6a":
+                nivel.setNivel(Nivel.nivelAsociado._6a);
+                break;
+            case "6a+":
+                nivel.setNivel(Nivel.nivelAsociado._6am);
+                break;
+            case "6b":
+                nivel.setNivel(Nivel.nivelAsociado._6b);
+                break;
+            case "6b+":
+                nivel.setNivel(Nivel.nivelAsociado._6bm);
+                break;
+            case "6c":
+                nivel.setNivel(Nivel.nivelAsociado._6c);
+                break;
+            case "6c+":
+                nivel.setNivel(Nivel.nivelAsociado._6cm);
+                break;
+            case "7a":
+                nivel.setNivel(Nivel.nivelAsociado._7a);
+                break;
+            case "7a+":
+                nivel.setNivel(Nivel.nivelAsociado._7am);
+                break;
+            case "7b":
+                nivel.setNivel(Nivel.nivelAsociado._7b);
+                break;
+            case "7b+":
+                nivel.setNivel(Nivel.nivelAsociado._7bm);
+                break;
+            case "7c":
+                nivel.setNivel(Nivel.nivelAsociado._7c);
+                break;
+            case "7c+":
+                nivel.setNivel(Nivel.nivelAsociado._7cm);
+                break;
+            case "8a":
+                nivel.setNivel(Nivel.nivelAsociado._8a);
+                break;
+            case "8a+":
+                nivel.setNivel(Nivel.nivelAsociado._8am);
+                break;
+            case "8b":
+                nivel.setNivel(Nivel.nivelAsociado._8b);
+                break;
+            case "8b+":
+                nivel.setNivel(Nivel.nivelAsociado._8bm);
+                break;
+            case "8c":
+                nivel.setNivel(Nivel.nivelAsociado._8c);
+                break;
+            case "8c+":
+                nivel.setNivel(Nivel.nivelAsociado._8cm);
+                break;
+            case "9a":
+                nivel.setNivel(Nivel.nivelAsociado._9a);
+                break;
+            case "9a+":
+                nivel.setNivel(Nivel.nivelAsociado._9am);
+                break;
+            case "9b":
+                nivel.setNivel(Nivel.nivelAsociado._9b);
+                break;
+            case "9b+":
+                nivel.setNivel(Nivel.nivelAsociado._9bm);
+                break;
+            case "9c":
+                nivel.setNivel(Nivel.nivelAsociado._9c);
+                break;
+            case "9c+":
+                nivel.setNivel(Nivel.nivelAsociado._9cm);
+                break;
+                
+            default:
+                break;
+        }
+        
+        
+        
+        red.realizarVia(_id_via, nivel, _valoracion.getValoracion());
         
     }
     

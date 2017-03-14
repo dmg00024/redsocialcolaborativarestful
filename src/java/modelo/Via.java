@@ -26,15 +26,14 @@ public class Via implements Serializable
     private Nivel nivel;
     @ManyToOne (fetch = FetchType.EAGER)
     private Nivel nivelConsensuado;
+    private double valoracion_media_nivel;
+    private Integer estrellas;
+    private double valoracion_media;
     @OneToMany (fetch = FetchType.LAZY)
     private final List<Comentario> comentarios;
     @ManyToOne (fetch = FetchType.EAGER)
     private Sector sector;
     private Integer contador;
-    @ManyToMany
-    private final List<Puntuacion> puntuaciones;
-    @ManyToMany
-    private final List<PuntuacionNivel> puntuaciones_nivel;
     
     /**
      * 
@@ -43,8 +42,8 @@ public class Via implements Serializable
     {
         comentarios=new ArrayList();
         contador=0;
-        puntuaciones=new ArrayList();
-        puntuaciones_nivel=new ArrayList();
+        valoracion_media=0;
+        valoracion_media_nivel=0;
     }
 
     /**
@@ -58,8 +57,8 @@ public class Via implements Serializable
         this.nombre = nombre;
         this.nivel = nivel;
         contador=0;
-        puntuaciones=new ArrayList();
-        puntuaciones_nivel=new ArrayList();
+        valoracion_media=0;
+        valoracion_media_nivel=0;
     }
 
     /**
@@ -156,6 +155,60 @@ public class Via implements Serializable
      * 
      * @return 
      */
+    public double getValoracion_media_nivel() 
+    {
+        return valoracion_media_nivel;
+    }
+
+    /**
+     * 
+     * @param valoracion_media_nivel 
+     */
+    public void setValoracion_media_nivel(double valoracion_media_nivel)
+    {
+        this.valoracion_media_nivel = valoracion_media_nivel;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public Integer getEstrellas()
+    {
+        return estrellas;
+    }
+
+    /**
+     * 
+     * @param estrellas 
+     */
+    public void setEstrellas(Integer estrellas) 
+    {
+        this.estrellas = estrellas;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public double getValoracion_media() 
+    {
+        return valoracion_media;
+    }
+
+    /**
+     * 
+     * @param valoracion_media 
+     */
+    public void setValoracion_media(double valoracion_media) 
+    {
+        this.valoracion_media = valoracion_media;
+    }
+
+    /**
+     * 
+     * @return 
+     */
     public Sector getSector() 
     {
         return sector;
@@ -195,24 +248,6 @@ public class Via implements Serializable
     public void setContador(Integer contador) 
     {
         this.contador = contador;
-    }
-
-    /**
-     * 
-     * @return 
-     */
-    public List<Puntuacion> getPuntuaciones()
-    {
-        return puntuaciones;
-    }
-
-    /**
-     * 
-     * @return 
-     */
-    public List<PuntuacionNivel> getPuntuaciones_nivel() 
-    {
-        return puntuaciones_nivel;
     }
     
 }

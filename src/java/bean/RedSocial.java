@@ -770,52 +770,41 @@ public class RedSocial
      */
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.RealizarViaException.class)
     public void realizarVia(Integer id_via, Nivel _nivel_valoracion, Integer _valoracion)
-    {
-        //faltan daos
-        
-        usuarioConectado=daoUsuario.obtenerUsuario(username);
-        
-        Nivel n=daoNivel.obtenerNivel(_nivel_valoracion.getNivelAsociado());
-        
+    {   
         Via v=daoVia.obtenerVia(id_via);
+        usuarioConectado=daoUsuario.obtenerUsuario(username);
         
         if(usuarioConectado.getViasRealizadas().contains(v))
         {
             usuarioConectado.getViasRealizadas().remove(v);
-            usuarioConectado.getViasRealizadas().add(v);
-            v.setContador(v.getContador()+1);
-            
-            if(usuarioConectado.getNivel().getNivelAsociado().compareTo(v.getNivel().getNivelAsociado()) > 0)
-            {
-                usuarioConectado.setNivel(v.getNivel());
-            }            
-            
-            //aquí se debería aplicar el algoritmo de reestimacion colaborativa
-            
-            
-            
-            v.setNivelConsensuado(n);
-            daoVia.actualizarVia(v);
-        }
-        else
-        {
-            usuarioConectado.getViasRealizadas().add(v);
-            
-            v.setContador(v.getContador()+1);
-            
-            if(usuarioConectado.getNivel().getNivelAsociado().compareTo(v.getNivel().getNivelAsociado()) > 0)
-            {
-                usuarioConectado.setNivel(v.getNivel());
-            } 
-            
-            //aquí se debería aplicar el algoritmo de reestimacion colaborativa
-            
-            
-            v.setNivelConsensuado(n);
-            daoVia.actualizarVia(v);
         }
         
+        usuarioConectado.getViasRealizadas().add(v);
+            
+        if(usuarioConectado.getNivel().getNivelAsociado().compareTo(v.getNivel().getNivelAsociado()) > 0)
+        {
+            usuarioConectado.setNivel(v.getNivel());
+        }            
+            
+        //media puntuaciones
+        double media=(v.getValoracion_media()*v.getContador()+_valoracion)/(v.getContador()+1);
+        v.setValoracion_media(media);
+        v.setContador(v.getContador()+1);        
+        int entera=(int)media;
+        double decimal=media-entera;
+        
+        if(decimal >= 0.5)
+        {
+            entera++;
+        }
+        v.setEstrellas(entera);
+        
+        //aquí se debería aplicar el algoritmo de reestimacion colaborativa
+        v.setNivelConsensuado(_nivel_valoracion);
+        
+        daoVia.actualizarVia(v);
         daoUsuario.actualizarUsuario(usuarioConectado);
+        
     }
  
     /**

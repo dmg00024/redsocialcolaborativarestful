@@ -36,8 +36,8 @@ and open the template in the editor.
     
     <bean id="DAOVia" class="dao.DAOVia" />
     
-    <bean id="DAOToken" class="dao.DAOToken"/>
-    
+    <bean id="DAOToken" class="dao.DAOToken" />
+      
     <bean id="RedSocial" class="bean.RedSocial">
         <property name="daoComentario" ref="DAOComentario" />
         <property name="daoEscuela" ref="DAOEscuela" />
