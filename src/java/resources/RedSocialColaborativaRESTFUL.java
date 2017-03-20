@@ -1592,8 +1592,6 @@ public class RedSocialColaborativaRESTFUL
                 break;
         }
         
-        
-        
         red.realizarVia(_id_via, nivel, _valoracion.getValoracion());
         
     }

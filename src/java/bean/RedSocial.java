@@ -779,27 +779,90 @@ public class RedSocial
             usuarioConectado.getViasRealizadas().remove(v);
         }
         
-        usuarioConectado.getViasRealizadas().add(v);
-            
-        if(usuarioConectado.getNivel().getNivelAsociado().compareTo(v.getNivel().getNivelAsociado()) > 0)
-        {
-            usuarioConectado.setNivel(v.getNivel());
-        }            
+        usuarioConectado.getViasRealizadas().add(v);           
             
         //media puntuaciones
-        double media=(v.getValoracion_media()*v.getContador()+_valoracion)/(v.getContador()+1);
-        v.setValoracion_media(media);
+        double media_valoracion=(v.getValoracion_media()*v.getContador()+_valoracion)/(v.getContador()+1);
+        v.setValoracion_media(media_valoracion);
         v.setContador(v.getContador()+1);        
-        int entera=(int)media;
-        double decimal=media-entera;
+        int entera_valoracion=(int)media_valoracion;
+        double decimal_valoracion=media_valoracion-entera_valoracion;
         
-        if(decimal >= 0.5)
+        if(decimal_valoracion >= 0.5)
         {
-            entera++;
+            entera_valoracion++;
         }
-        v.setEstrellas(entera);
+        v.setEstrellas(entera_valoracion);
         
         //aquí se debería aplicar el algoritmo de reestimacion colaborativa
+        //ponderacion media segun su nivel medio de las últimas 10 vias realizadas
+        double media_nivel_usuario=0;
+        int entera_nivel_usuario;
+        double decimal_nivel_usuario;
+        
+        if(usuarioConectado.getViasRealizadas().size() < 10)
+        {       
+            if(usuarioConectado.getViasRealizadas().isEmpty())
+            {
+                Nivel n=daoNivel.obtenerNivel(v.getNivel().getNivelAsociado());
+                usuarioConectado.setNivel(n);
+            }
+            else
+            {
+                for (Via via : usuarioConectado.getViasRealizadas()) 
+                {
+                    media_nivel_usuario = media_nivel_usuario + via.getNivel().getNivelAsociado().ordinal();
+                }
+                media_nivel_usuario = (double) ((double) (media_nivel_usuario) / (double) (usuarioConectado.getViasRealizadas().size()));
+
+                entera_nivel_usuario = (int) media_nivel_usuario;
+                decimal_nivel_usuario = media_nivel_usuario - entera_nivel_usuario;
+                
+                
+                if(decimal_nivel_usuario >= 0.5)
+                {
+                    entera_nivel_usuario++;
+                }
+                
+                Nivel n=daoNivel.obtenerNivel(Nivel.nivelAsociado.values()[entera_nivel_usuario]);
+                usuarioConectado.setNivel(n);
+            } 
+        }
+        else
+        {
+            int contador=0;
+            int pos=usuarioConectado.getViasRealizadas().size()-1;
+            
+            while(contador != 10)
+            {
+                media_nivel_usuario=media_nivel_usuario+usuarioConectado.getViasRealizadas().get(pos).getNivel().getNivelAsociado().ordinal();
+                pos--;
+                contador++;
+            }
+            media_nivel_usuario = (double) ((double) (media_nivel_usuario) / (double) (usuarioConectado.getViasRealizadas().size()));
+            entera_nivel_usuario = (int) media_nivel_usuario;
+            decimal_nivel_usuario = media_nivel_usuario - entera_nivel_usuario;
+            
+            if (decimal_nivel_usuario >= 0.5)
+            {
+                entera_nivel_usuario++;
+            }
+
+            Nivel n=daoNivel.obtenerNivel(Nivel.nivelAsociado.values()[entera_nivel_usuario]);
+            usuarioConectado.setNivel(n);
+            
+        }
+        
+        //calculo del porcentaje de fiabilidad
+        double porcentaje_fiabilidad;
+        
+        
+        
+        //ese porcentaje aumenta hasta un 20% según sea más o menos conocido
+        
+        //puede aumentar conforme más vías vaya publicando hasta en un 20%
+        
+        
         v.setNivelConsensuado(_nivel_valoracion);
         
         daoVia.actualizarVia(v);
