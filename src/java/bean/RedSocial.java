@@ -784,21 +784,21 @@ public class RedSocial
         //media puntuaciones
         double media_valoracion=(v.getValoracion_media()*v.getContador()+_valoracion)/(v.getContador()+1);
         v.setValoracion_media(media_valoracion);
-        v.setContador(v.getContador()+1);        
-        int entera_valoracion=(int)media_valoracion;
-        double decimal_valoracion=media_valoracion-entera_valoracion;
+        v.setContador(v.getContador()+1);
         
-        if(decimal_valoracion >= 0.5)
+        if((media_valoracion - ((int)media_valoracion)) >= 0.5)
         {
-            entera_valoracion++;
+            v.setEstrellas((int)media_valoracion + 1);
         }
-        v.setEstrellas(entera_valoracion);
+        else
+        {
+            v.setEstrellas((int)media_valoracion);
+        }
         
         //aquí se debería aplicar el algoritmo de reestimacion colaborativa
         //ponderacion media segun su nivel medio de las últimas 10 vias realizadas
-        double media_nivel_usuario=0;
-        int entera_nivel_usuario;
-        double decimal_nivel_usuario;
+        int suma_nivel_usuario=0;
+        double media_nivel_usuario;
         
         if(usuarioConectado.getViasRealizadas().size() < 10)
         {       
@@ -806,26 +806,26 @@ public class RedSocial
             {
                 Nivel n=daoNivel.obtenerNivel(v.getNivel().getNivelAsociado());
                 usuarioConectado.setNivel(n);
+                media_nivel_usuario=v.getNivel().getNivelAsociado().ordinal();
             }
             else
             {
                 for (Via via : usuarioConectado.getViasRealizadas()) 
                 {
-                    media_nivel_usuario = media_nivel_usuario + via.getNivel().getNivelAsociado().ordinal();
+                    suma_nivel_usuario = suma_nivel_usuario + via.getNivel().getNivelAsociado().ordinal();
                 }
-                media_nivel_usuario = (double) ((double) (media_nivel_usuario) / (double) (usuarioConectado.getViasRealizadas().size()));
-
-                entera_nivel_usuario = (int) media_nivel_usuario;
-                decimal_nivel_usuario = media_nivel_usuario - entera_nivel_usuario;
+                media_nivel_usuario = (double) ((double) (suma_nivel_usuario) / (double) (usuarioConectado.getViasRealizadas().size()));
                 
-                
-                if(decimal_nivel_usuario >= 0.5)
+                if((media_nivel_usuario - (int) media_nivel_usuario) >= 0.5)
                 {
-                    entera_nivel_usuario++;
+                    Nivel n=new Nivel(Nivel.nivelAsociado.values()[(int) media_nivel_usuario+1]);
+                    usuarioConectado.setNivel(n);
                 }
-                
-                Nivel n=daoNivel.obtenerNivel(Nivel.nivelAsociado.values()[entera_nivel_usuario]);
-                usuarioConectado.setNivel(n);
+                else
+                {
+                    Nivel n=new Nivel(Nivel.nivelAsociado.values()[(int) media_nivel_usuario]);
+                    usuarioConectado.setNivel(n);
+                }
             } 
         }
         else
@@ -835,32 +835,77 @@ public class RedSocial
             
             while(contador != 10)
             {
-                media_nivel_usuario=media_nivel_usuario+usuarioConectado.getViasRealizadas().get(pos).getNivel().getNivelAsociado().ordinal();
+                suma_nivel_usuario=suma_nivel_usuario+usuarioConectado.getViasRealizadas().get(pos).getNivel().getNivelAsociado().ordinal();
                 pos--;
                 contador++;
             }
-            media_nivel_usuario = (double) ((double) (media_nivel_usuario) / (double) (usuarioConectado.getViasRealizadas().size()));
-            entera_nivel_usuario = (int) media_nivel_usuario;
-            decimal_nivel_usuario = media_nivel_usuario - entera_nivel_usuario;
+            media_nivel_usuario = (double) ((double) (suma_nivel_usuario) / (double) (usuarioConectado.getViasRealizadas().size()));
             
-            if (decimal_nivel_usuario >= 0.5)
+            if((media_nivel_usuario - (int) media_nivel_usuario) >= 0.5)
             {
-                entera_nivel_usuario++;
+                Nivel n=new Nivel(Nivel.nivelAsociado.values()[(int) media_nivel_usuario+1]);
+                usuarioConectado.setNivel(n);
             }
-
-            Nivel n=daoNivel.obtenerNivel(Nivel.nivelAsociado.values()[entera_nivel_usuario]);
-            usuarioConectado.setNivel(n);
-            
+            else
+            {
+                Nivel n=new Nivel(Nivel.nivelAsociado.values()[(int) media_nivel_usuario]);
+                usuarioConectado.setNivel(n);
+            }
         }
         
         //calculo del porcentaje de fiabilidad
-        double porcentaje_fiabilidad;
-        
-        
+        double porcentaje_fiabilidad=((100 * media_nivel_usuario)/29.0);
         
         //ese porcentaje aumenta hasta un 20% según sea más o menos conocido
+        if(usuarioConectado.getAmigos().size() >= 0 && usuarioConectado.getAmigos().size() < 10)
+        {
+            porcentaje_fiabilidad=porcentaje_fiabilidad+0;
+        }
+        if(usuarioConectado.getAmigos().size() >= 10 && usuarioConectado.getAmigos().size() < 20)
+        {
+            porcentaje_fiabilidad=porcentaje_fiabilidad+5;
+        }
+        if(usuarioConectado.getAmigos().size() >= 20 && usuarioConectado.getAmigos().size() < 50)
+        {
+            porcentaje_fiabilidad=porcentaje_fiabilidad+10;
+        }
+        if(usuarioConectado.getAmigos().size() >= 50 && usuarioConectado.getAmigos().size() < 100)
+        {
+            porcentaje_fiabilidad=porcentaje_fiabilidad+15;
+        }
+        if(usuarioConectado.getAmigos().size() >= 100)
+        {
+            porcentaje_fiabilidad=porcentaje_fiabilidad+20;
+        }
         
         //puede aumentar conforme más vías vaya publicando hasta en un 20%
+        if(usuarioConectado.getViasRealizadas().size() >= 0 && usuarioConectado.getViasRealizadas().size() < 10)
+        {
+            porcentaje_fiabilidad=porcentaje_fiabilidad+0;
+        }
+        if(usuarioConectado.getViasRealizadas().size() >= 10 && usuarioConectado.getViasRealizadas().size() < 20)
+        {
+            porcentaje_fiabilidad=porcentaje_fiabilidad+5;
+        }
+        if(usuarioConectado.getViasRealizadas().size() >= 20 && usuarioConectado.getViasRealizadas().size() < 50)
+        {
+            porcentaje_fiabilidad=porcentaje_fiabilidad+10;
+        }
+        if(usuarioConectado.getViasRealizadas().size() >= 50 && usuarioConectado.getViasRealizadas().size() < 100)
+        {
+            porcentaje_fiabilidad=porcentaje_fiabilidad+15;
+        }
+        if(usuarioConectado.getViasRealizadas().size() >= 100)
+        {
+            porcentaje_fiabilidad=porcentaje_fiabilidad+20;
+        }
+        
+        //calculo del la media colaborativa
+        double tanto_fiabilidad=porcentaje_fiabilidad/100;
+        double puntuacion_total_nivel=0;
+        double ponderacion_actual_puntuacion=(1/((double)v.getContador()));
+        
+        
         
         
         v.setNivelConsensuado(_nivel_valoracion);
