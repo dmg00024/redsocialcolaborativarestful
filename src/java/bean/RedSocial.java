@@ -902,13 +902,24 @@ public class RedSocial
         
         //calculo del la media colaborativa
         double tanto_fiabilidad=porcentaje_fiabilidad/100;
-        double puntuacion_total_nivel=0;
+        double puntuacion_total_nivel;
         double ponderacion_actual_puntuacion=(1/((double)v.getContador()));
+        double ponderacion_usuario=ponderacion_actual_puntuacion*tanto_fiabilidad;
+        double ponderacion_general=1.0-ponderacion_usuario;
         
+        puntuacion_total_nivel=v.getValoracion_media_nivel()*ponderacion_general+_nivel_valoracion.getNivelAsociado().ordinal()*ponderacion_usuario;
+        v.setValoracion_media_nivel(puntuacion_total_nivel);
         
-        
-        
-        v.setNivelConsensuado(_nivel_valoracion);
+        if(puntuacion_total_nivel - (int)puntuacion_total_nivel >= 0.5)
+        {
+            Nivel n=new Nivel(Nivel.nivelAsociado.values()[(int) puntuacion_total_nivel + 1]);
+            v.setNivelConsensuado(n);
+        }
+        else
+        {
+            Nivel n=new Nivel(Nivel.nivelAsociado.values()[(int) puntuacion_total_nivel]);
+            v.setNivelConsensuado(n);
+        }
         
         daoVia.actualizarVia(v);
         daoUsuario.actualizarUsuario(usuarioConectado);
