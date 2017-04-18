@@ -80,7 +80,8 @@ public class RedSocialColaborativaRESTFUL
         }
         catch(RuntimeException e)
         {
-            throw new exceptionsBusiness.UsernameNoDisponible();
+            //codigo 409
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         
         return new ResponseEntity<>(HttpStatus.OK);
