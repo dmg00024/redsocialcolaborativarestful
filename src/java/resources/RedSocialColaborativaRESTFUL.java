@@ -93,7 +93,7 @@ public class RedSocialColaborativaRESTFUL
      * @return
      * @throws NoSuchAlgorithmException 
      */
-    @RequestMapping(value = "/perfil/acceso/{token}", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    @RequestMapping(value = "/confirmacion/{token}", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     public ResponseEntity<String> altaUsuario(@PathVariable ("token") String _token) throws NoSuchAlgorithmException
     {
         try

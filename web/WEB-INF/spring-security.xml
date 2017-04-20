@@ -14,6 +14,7 @@
         <intercept-url pattern="/username" access="hasRole('USER')" requires-channel="https"/>
         <intercept-url pattern="/perfil" access="hasRole('USER')" requires-channel="https"/>
         <intercept-url pattern="/comentarios" access="hasRole('USER')" requires-channel="https"/>
+        <logout logout-url="/logout" />
         <form-login  authentication-failure-url="/prueba"/>
     </http>
     
