@@ -16,6 +16,7 @@ import dto.GestionarPeticionDTO;
 import dto.NewPasswordDTO;
 import dto.NuevaViaDTO;
 import dto.NuevoUsuarioDTO;
+import dto.NumeroPeticionesDTO;
 import dto.PerfilDTO;
 import dto.PeticionDTO;
 import dto.SectorDTO;
@@ -931,6 +932,29 @@ public class RedSocialColaborativaRESTFUL
         return vias;
     }
     
+    /**
+     * 
+     * @return 
+     */
+    @RequestMapping(value = "perfil/numeropeticiones", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody NumeroPeticionesDTO numeroPeticionesAmistadPendientes()
+    {
+        NumeroPeticionesDTO numero=new NumeroPeticionesDTO();
+        
+        String usernameConectado=null;
+        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if(principal instanceof UserDetails)
+        {
+            usernameConectado=((UserDetails) principal).getUsername();
+        }
+        
+        red.setUsername(usernameConectado);
+        
+        numero.setNumeroPendientes(red.peticionesAmistadRecibidas().size());
+        
+        return numero;
+    }
     /**
      * 
      * @return 
