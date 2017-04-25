@@ -28,13 +28,13 @@ public class Usuario implements Serializable
     private String email;
     private String password;
     private final String role;
-    @ManyToMany (fetch = FetchType.LAZY)
+    @ManyToMany (fetch = FetchType.EAGER)
     private final List<Usuario> amigos;
-    @ManyToMany (fetch = FetchType.LAZY)
+    @ManyToMany (fetch = FetchType.EAGER)
     private final List<Via> viasRealizadas;
-    @ManyToMany (fetch = FetchType.LAZY)
+    @ManyToMany (fetch = FetchType.EAGER)
     private final List<PeticionAmistad> peticionesAmistad;
-    @OneToMany (fetch = FetchType.LAZY)
+    @OneToMany (fetch = FetchType.EAGER)
     private final List<Comentario> comentarios;
 
     /**
