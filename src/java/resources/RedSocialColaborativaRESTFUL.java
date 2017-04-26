@@ -1016,7 +1016,7 @@ public class RedSocialColaborativaRESTFUL
      * 
      * @param _peticion 
      */
-    @RequestMapping(value = "/perfil/peticion", method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "/perfil/peticiones", method = RequestMethod.PUT, consumes = "application/json")
     public void confirmarAmistad(@RequestBody GestionarPeticionDTO _peticion)
     {
         String usernameConectado=null;
