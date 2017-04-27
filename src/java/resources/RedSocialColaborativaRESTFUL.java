@@ -423,7 +423,7 @@ public class RedSocialColaborativaRESTFUL
             }
         }
         
-        return new PerfilDTO(red.getUsuarioConectado().getUsername(), red.getUsuarioConectado().getNombre(), red.getUsuarioConectado().getApellidos(), red.getUsuarioConectado().getNivel().getNivelAsociado().name(), red.getUsuarioConectado().getFotoperfil());
+        return new PerfilDTO(red.getUsuarioConectado().getUsername(), red.getUsuarioConectado().getNombre(), red.getUsuarioConectado().getApellidos(), nivel, red.getUsuarioConectado().getFotoperfil());
     }
     
     /**
