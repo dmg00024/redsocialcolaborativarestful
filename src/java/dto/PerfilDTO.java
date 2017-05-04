@@ -15,6 +15,7 @@ public class PerfilDTO
     private String nombre;
     private String apellidos;
     private String nivel;
+    private String mail;
     private byte[] foto;
 
     /**
@@ -31,14 +32,16 @@ public class PerfilDTO
      * @param nombre
      * @param apellidos
      * @param nivel
+     * @param mail 
      * @param foto 
      */
-    public PerfilDTO(String username, String nombre, String apellidos, String nivel, byte[] foto)
+    public PerfilDTO(String username, String nombre, String apellidos, String nivel, String mail, byte[] foto)
     {
         this.username = username;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.nivel = nivel;
+        this.mail = mail;
         this.foto = foto;
     }
 
@@ -112,6 +115,24 @@ public class PerfilDTO
     public void setNivel(String nivel) 
     {
         this.nivel = nivel;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public String getMail()
+    {
+        return mail;
+    }
+
+    /**
+     * 
+     * @param mail 
+     */
+    public void setMail(String mail)
+    {
+        this.mail = mail;
     }
 
     /**

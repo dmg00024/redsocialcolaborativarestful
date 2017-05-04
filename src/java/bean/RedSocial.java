@@ -51,6 +51,7 @@ import modelo.Via;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import sun.misc.BASE64Decoder;
 
 /**
  *
@@ -467,16 +468,27 @@ public class RedSocial
         usuarioConectado.setApellidos(_apellidos);
         usuarioConectado.setEmail(_email);
         
-        if(!"".equals(dir_foto))
+        dir_foto=dir_foto.substring(23);
+        
+        if(dir_foto != null)
         {
-            File foto=new File(dir_foto);
-            byte[] _fotoperfil=Files.readAllBytes(foto.toPath());
+            //File foto=new File(dir_foto);
+            
+            //byte[] _fotoperfil=Base64.decode(dir_foto); 
+            //byte[] _fotoperfil = Base64.getDecoder().decode(dir_foto);
+            BASE64Decoder decoder = new BASE64Decoder();
+            byte[] _fotoperfil = decoder.decodeBuffer(dir_foto);
             usuarioConectado.setFotoperfil(_fotoperfil);
+
+
+            //byte[] _fotoperfil=Files.readAllBytes(foto.toPath());
+            
+            
         }
-        else
-        {
-            usuarioConectado.setFotoperfil(null);
-        }
+//        else
+//        {
+//            usuarioConectado.setFotoperfil(null);
+//        }
         
         daoUsuario.actualizarUsuario(usuarioConectado);
     }
