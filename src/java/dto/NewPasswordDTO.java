@@ -11,6 +11,7 @@ package dto;
  */
 public class NewPasswordDTO 
 {
+    private String passwordActual;
     private String newPassword;
     private String confPassword;
 
@@ -22,6 +23,24 @@ public class NewPasswordDTO
         
     }
 
+    /**
+     * 
+     * @return 
+     */
+    public String getPasswordActual()
+    {
+        return passwordActual;
+    }
+
+    /**
+     * 
+     * @param passwordActual 
+     */
+    public void setPasswordActual(String passwordActual)
+    {
+        this.passwordActual = passwordActual;
+    }
+    
     /**
      * 
      * @return 

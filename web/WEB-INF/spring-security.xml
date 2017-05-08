@@ -18,7 +18,7 @@
         <form-login  authentication-failure-url="/prueba"/>
     </http>
     
-    <authentication-manager >
+    <authentication-manager erase-credentials="false">
         <authentication-provider user-service-ref="database" >
             <password-encoder hash="bcrypt"/>
         </authentication-provider>

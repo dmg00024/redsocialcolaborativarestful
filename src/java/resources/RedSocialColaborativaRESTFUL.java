@@ -40,6 +40,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -172,17 +173,19 @@ public class RedSocialColaborativaRESTFUL
         if(principal instanceof UserDetails)
         {
             usernameConectado=((UserDetails) principal).getUsername();
+            
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            
+            if(!encoder.matches(_newPasswordDTO.getPasswordActual(), ((UserDetails) principal).getPassword()))
+            {
+                return new ResponseEntity<>("Usuario sin identificar", HttpStatus.NETWORK_AUTHENTICATION_REQUIRED);
+            }
         }
-        
+
         if(!_newPasswordDTO.getNewPassword().equals(_newPasswordDTO.getConfPassword()))
         {
             return new ResponseEntity<>("Password no confirmado",HttpStatus.BAD_REQUEST);
-        }
-        
-        if(_newPasswordDTO.getNewPassword().length() < 6)
-        {
-            return new ResponseEntity<>("Password con menos de 6 caracteres", HttpStatus.BAD_REQUEST);
-        }
+        }   
         
         red.setUsername(usernameConectado);
         

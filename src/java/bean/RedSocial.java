@@ -445,7 +445,7 @@ public class RedSocial
     {
         String hash = BCrypt.hashpw(_newPassword, BCrypt.gensalt());
         
-        usuarioConectado=daoUsuario.obtenerUsuario(usuarioConectado.getUsername());
+        usuarioConectado=daoUsuario.obtenerUsuario(username);
         
         usuarioConectado.setPassword(hash);
         
