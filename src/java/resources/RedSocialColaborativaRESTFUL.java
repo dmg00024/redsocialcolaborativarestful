@@ -69,11 +69,11 @@ public class RedSocialColaborativaRESTFUL
     {
         if(!_usuario.getMail().equals(_usuario.getConfMail()))
         {
-            return new ResponseEntity<>("Email no confirmado",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         else if(!_usuario.getPassword().equals(_usuario.getConfPassword()))
         {
-            return new ResponseEntity<>("Password no confirmado",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         
         try
@@ -140,7 +140,7 @@ public class RedSocialColaborativaRESTFUL
     {
         if(!_usuario.getMail().equals(_usuario.getConfMail()))
         {
-            return new ResponseEntity<>("Email no confirmado",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         
         String usernameConectado=null;
@@ -176,15 +176,20 @@ public class RedSocialColaborativaRESTFUL
             
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             
+            if (_newPasswordDTO.getPasswordActual() == null) 
+            {
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
+            }
+
             if(!encoder.matches(_newPasswordDTO.getPasswordActual(), ((UserDetails) principal).getPassword()))
             {
-                return new ResponseEntity<>("Usuario sin identificar", HttpStatus.NETWORK_AUTHENTICATION_REQUIRED);
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
         }
-
+        
         if(!_newPasswordDTO.getNewPassword().equals(_newPasswordDTO.getConfPassword()))
         {
-            return new ResponseEntity<>("Password no confirmado",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }   
         
         red.setUsername(usernameConectado);
