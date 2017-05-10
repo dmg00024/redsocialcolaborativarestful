@@ -977,34 +977,4 @@ public class RedSocial
         
         return comentarios;
     }
-    /**
-     * 
-     * @param _username
-     * @return 
-     */
-    public boolean esAmigo(String _username)
-    {
-        usuarioConectado=daoUsuario.obtenerUsuario(username);
-        
-        Usuario usuario=daoUsuario.obtenerUsuario(_username);
-        
-        if(!usuarioConectado.getAmigos().isEmpty())
-        {
-            for (Usuario amigo : usuarioConectado.getAmigos()) 
-            {
-                if(usuario.getUsername().equals(amigo.getUsername()))
-                {
-                    return true;
-                }
-            }
-            
-            return false;
-        }
-        else
-        {
-            return false;
-        }
-        
-    }
-   
 }

@@ -12,9 +12,8 @@
         <intercept-url pattern="/prueba" access="permitAll" />
         
         <intercept-url pattern="/username" access="hasRole('USER')" requires-channel="https"/>
-        <intercept-url pattern="/perfil/*" method="GET" access="hasRole('USER')" requires-channel="https"/>
+        <intercept-url pattern="/perfil" method="GET" access="hasRole('USER')" requires-channel="https"/>
         <intercept-url pattern="/comentarios" access="hasRole('USER')" requires-channel="https"/>
-        <intercept-url pattern="/amistad/*" access="hasRole('USER')" requires-channel="https"/>
         <logout logout-url="/logout" />
         <form-login  authentication-failure-url="/prueba"/>
     </http>

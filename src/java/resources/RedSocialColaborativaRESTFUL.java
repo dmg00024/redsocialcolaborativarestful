@@ -1562,26 +1562,4 @@ public class RedSocialColaborativaRESTFUL {
 
     }
 
-    /**
-     * 
-     * @param _username
-     * @return 
-     */
-    @RequestMapping(value = "/amistad/{username}", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody ComprobarAmigoDTO comprobarAmistad(@PathVariable("username") String _username) 
-    {        
-        String usernameConectado = null;
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            usernameConectado = ((UserDetails) principal).getUsername();
-        }
-
-        red.setUsername(usernameConectado);
-        
-        ComprobarAmigoDTO comprobarAmigo=new ComprobarAmigoDTO(red.esAmigo(_username));
-        
-        return comprobarAmigo;
-    }
-
 }
