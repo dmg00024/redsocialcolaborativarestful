@@ -10,6 +10,7 @@ import dto.ActualizarUsuarioDTO;
 import dto.AmigosDTO;
 import dto.ComentarioDTO;
 import dto.ComentariosDTO;
+import dto.ComprobarAmigoDTO;
 import dto.EscuelaDTO;
 import dto.EscuelasDTO;
 import dto.GestionarPeticionDTO;
@@ -54,468 +55,436 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/")
-public class RedSocialColaborativaRESTFUL
-{
+public class RedSocialColaborativaRESTFUL {
+
     @Autowired
     private RedSocial red;
-    
+
     /**
-     * 
+     *
      * @param _usuario
-     * @return 
+     * @return
      */
     @RequestMapping(value = "/perfil/acceso", method = RequestMethod.POST, consumes = "application/json")
-    public ResponseEntity<String> solicitudAcceso(@RequestBody NuevoUsuarioDTO _usuario)
-    {
-        if(!_usuario.getMail().equals(_usuario.getConfMail()))
-        {
+    public ResponseEntity<String> solicitudAcceso(@RequestBody NuevoUsuarioDTO _usuario) {
+        if (!_usuario.getMail().equals(_usuario.getConfMail())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else if (!_usuario.getPassword().equals(_usuario.getConfPassword())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        else if(!_usuario.getPassword().equals(_usuario.getConfPassword()))
-        {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        
-        try
-        {
+
+        try {
             red.solicitarAcceso(_usuario.getUsername(), _usuario.getMail(), _usuario.getPassword());
-        }
-        catch(RuntimeException e)
-        {
+        } catch (RuntimeException e) {
             //codigo 409
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-        
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
+
     /**
-     * 
+     *
      * @param _token
      * @return
-     * @throws NoSuchAlgorithmException 
+     * @throws NoSuchAlgorithmException
      */
     @RequestMapping(value = "/confirmacion/{token}", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public ResponseEntity<String> altaUsuario(@PathVariable ("token") String _token) throws NoSuchAlgorithmException
-    {
-        try
-        {
+    public ResponseEntity<String> altaUsuario(@PathVariable("token") String _token) throws NoSuchAlgorithmException {
+        try {
             red.altaUsuario(_token);
-        }
-        catch(RuntimeException ex)
-        {
+        } catch (RuntimeException ex) {
             throw new exceptionsBusiness.TokenCaducado();
         }
-        
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
+
     /**
-     * 
+     *
      */
     @RequestMapping(value = "/perfil", method = RequestMethod.DELETE)
-    public void bajaUsuario()
-    {    
-        String usernameConectado=null;
-        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
-        if(principal instanceof UserDetails)
-        {
-            usernameConectado=((UserDetails) principal).getUsername();
+    public void bajaUsuario() {
+        String usernameConectado = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            usernameConectado = ((UserDetails) principal).getUsername();
         }
-        
+
         red.setUsername(usernameConectado);
-        
+
         red.bajaUsuario();
     }
-    
+
     /**
-     * 
+     *
      * @param _usuario
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     @RequestMapping(value = "/perfil", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
-    public ResponseEntity<String> actualizarUsuario(@RequestBody ActualizarUsuarioDTO _usuario) throws IOException
-    {
-        if(!_usuario.getMail().equals(_usuario.getConfMail()))
-        {
+    public ResponseEntity<String> actualizarUsuario(@RequestBody ActualizarUsuarioDTO _usuario) throws IOException {
+        if (!_usuario.getMail().equals(_usuario.getConfMail())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        
-        String usernameConectado=null;
-        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
-        if(principal instanceof UserDetails)
-        {
-            usernameConectado=((UserDetails) principal).getUsername();
+
+        String usernameConectado = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            usernameConectado = ((UserDetails) principal).getUsername();
         }
-        
+
         red.setUsername(usernameConectado);
-        
+
         red.actualizarPerfilUsuario(_usuario.getNombre(), _usuario.getApellidos(), _usuario.getMail(), _usuario.getDir_foto());
-        
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
+
     /**
-     * 
+     *
      * @param _newPasswordDTO
      * @return
-     * @throws NoSuchAlgorithmException 
+     * @throws NoSuchAlgorithmException
      */
     @RequestMapping(value = "/perfil/password", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
-    public ResponseEntity<String> cambioPasswordUsuario(@RequestBody NewPasswordDTO _newPasswordDTO) throws NoSuchAlgorithmException
-    {
-        String usernameConectado=null;
-        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
-        if(principal instanceof UserDetails)
-        {
-            usernameConectado=((UserDetails) principal).getUsername();
-            
+    public ResponseEntity<String> cambioPasswordUsuario(@RequestBody NewPasswordDTO _newPasswordDTO) throws NoSuchAlgorithmException {
+        String usernameConectado = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            usernameConectado = ((UserDetails) principal).getUsername();
+
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            
-            if (_newPasswordDTO.getPasswordActual() == null) 
-            {
+
+            if (_newPasswordDTO.getPasswordActual() == null) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
 
-            if(!encoder.matches(_newPasswordDTO.getPasswordActual(), ((UserDetails) principal).getPassword()))
-            {
+            if (!encoder.matches(_newPasswordDTO.getPasswordActual(), ((UserDetails) principal).getPassword())) {
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
         }
-        
-        if(!_newPasswordDTO.getNewPassword().equals(_newPasswordDTO.getConfPassword()))
-        {
+
+        if (!_newPasswordDTO.getNewPassword().equals(_newPasswordDTO.getConfPassword())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }   
-        
+        }
+
         red.setUsername(usernameConectado);
-        
+
         red.cambiarPassword(_newPasswordDTO.getNewPassword());
-        
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
+
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     @RequestMapping(value = "/perfil", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody PerfilDTO miPerfil()
-    {
-        String usernameConectado=null;
-        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
-        if(principal instanceof UserDetails)
-        {
-            usernameConectado=((UserDetails) principal).getUsername();
+    public @ResponseBody
+    PerfilDTO miPerfil() {
+        String usernameConectado = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            usernameConectado = ((UserDetails) principal).getUsername();
         }
-        
+
         red.setUsername(usernameConectado);
-        
-        String nivel=null;
-        
-        if (null != red.getUsuarioConectado().getNivel().getNivelAsociado()) 
-        {
-            switch (red.getUsuarioConectado().getNivel().getNivelAsociado()) 
-            {
+
+        String nivel = null;
+
+        if (null != red.getUsuarioConectado().getNivel().getNivelAsociado()) {
+            switch (red.getUsuarioConectado().getNivel().getNivelAsociado()) {
                 case _1:
-                    nivel="1";
+                    nivel = "1";
                     break;
                 case _2:
-                    nivel="2";
+                    nivel = "2";
                     break;
                 case _3:
-                    nivel="3";
+                    nivel = "3";
                     break;
                 case _4:
-                    nivel="4";
+                    nivel = "4";
                     break;
                 case _5:
-                    nivel="5";
+                    nivel = "5";
                     break;
                 case _5m:
-                    nivel="5+";
+                    nivel = "5+";
                     break;
                 case _6a:
-                    nivel="6a";
+                    nivel = "6a";
                     break;
                 case _6am:
-                    nivel="6a+";
+                    nivel = "6a+";
                     break;
                 case _6b:
-                    nivel="6b";
+                    nivel = "6b";
                     break;
                 case _6bm:
-                    nivel="6b+";
+                    nivel = "6b+";
                     break;
                 case _6c:
-                    nivel="6c";
+                    nivel = "6c";
                     break;
                 case _6cm:
-                    nivel="6c+";
+                    nivel = "6c+";
                     break;
                 case _7a:
-                    nivel="7a";
+                    nivel = "7a";
                     break;
                 case _7am:
-                    nivel="7a+";
+                    nivel = "7a+";
                     break;
                 case _7b:
-                    nivel="7b";
+                    nivel = "7b";
                     break;
                 case _7bm:
-                    nivel="7b+";
+                    nivel = "7b+";
                     break;
                 case _7c:
-                    nivel="7c";
+                    nivel = "7c";
                     break;
                 case _7cm:
-                    nivel="7c+";
+                    nivel = "7c+";
                     break;
                 case _8a:
-                    nivel="8a";
+                    nivel = "8a";
                     break;
                 case _8am:
-                    nivel="8a+";
+                    nivel = "8a+";
                     break;
                 case _8b:
-                    nivel="8b";
+                    nivel = "8b";
                     break;
                 case _8bm:
-                    nivel="8b+";
+                    nivel = "8b+";
                     break;
                 case _8c:
-                    nivel="8c";
+                    nivel = "8c";
                     break;
                 case _8cm:
-                    nivel="8c+";
+                    nivel = "8c+";
                     break;
                 case _9a:
-                    nivel="9a";
+                    nivel = "9a";
                     break;
                 case _9am:
-                    nivel="9a+";
+                    nivel = "9a+";
                     break;
                 case _9b:
-                    nivel="9b";
+                    nivel = "9b";
                     break;
                 case _9bm:
-                    nivel="9b+";
+                    nivel = "9b+";
                     break;
                 case _9c:
-                    nivel="9c";
+                    nivel = "9c";
                     break;
                 case _9cm:
-                    nivel="9c+";
+                    nivel = "9c+";
                     break;
                 default:
                     break;
             }
         }
-        
+
         return new PerfilDTO(red.getUsuarioConectado().getUsername(), red.getUsuarioConectado().getNombre(), red.getUsuarioConectado().getApellidos(), nivel, red.getUsuarioConectado().getEmail(), red.getUsuarioConectado().getFotoperfil());
     }
-    
+
     /**
-     * 
+     *
      * @param _username
-     * @return 
+     * @return
      */
     @RequestMapping(value = "/perfil/{username}", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody PerfilDTO verPerfil(@PathVariable("username") String _username)
-    {
+    public @ResponseBody
+    PerfilDTO verPerfil(@PathVariable("username") String _username) {
         red.setUsername(_username);
-        
-        String nivel=null;
-        
-        if (null != red.getUsuarioConectado().getNivel().getNivelAsociado()) 
-        {
-            switch (red.getUsuarioConectado().getNivel().getNivelAsociado()) 
-            {
+
+        String nivel = null;
+
+        if (null != red.getUsuarioConectado().getNivel().getNivelAsociado()) {
+            switch (red.getUsuarioConectado().getNivel().getNivelAsociado()) {
                 case _1:
-                    nivel="1";
+                    nivel = "1";
                     break;
                 case _2:
-                    nivel="2";
+                    nivel = "2";
                     break;
                 case _3:
-                    nivel="3";
+                    nivel = "3";
                     break;
                 case _4:
-                    nivel="4";
+                    nivel = "4";
                     break;
                 case _5:
-                    nivel="5";
+                    nivel = "5";
                     break;
                 case _5m:
-                    nivel="5+";
+                    nivel = "5+";
                     break;
                 case _6a:
-                    nivel="6a";
+                    nivel = "6a";
                     break;
                 case _6am:
-                    nivel="6a+";
+                    nivel = "6a+";
                     break;
                 case _6b:
-                    nivel="6b";
+                    nivel = "6b";
                     break;
                 case _6bm:
-                    nivel="6b+";
+                    nivel = "6b+";
                     break;
                 case _6c:
-                    nivel="6c";
+                    nivel = "6c";
                     break;
                 case _6cm:
-                    nivel="6c+";
+                    nivel = "6c+";
                     break;
                 case _7a:
-                    nivel="7a";
+                    nivel = "7a";
                     break;
                 case _7am:
-                    nivel="7a+";
+                    nivel = "7a+";
                     break;
                 case _7b:
-                    nivel="7b";
+                    nivel = "7b";
                     break;
                 case _7bm:
-                    nivel="7b+";
+                    nivel = "7b+";
                     break;
                 case _7c:
-                    nivel="7c";
+                    nivel = "7c";
                     break;
                 case _7cm:
-                    nivel="7c+";
+                    nivel = "7c+";
                     break;
                 case _8a:
-                    nivel="8a";
+                    nivel = "8a";
                     break;
                 case _8am:
-                    nivel="8a+";
+                    nivel = "8a+";
                     break;
                 case _8b:
-                    nivel="8b";
+                    nivel = "8b";
                     break;
                 case _8bm:
-                    nivel="8b+";
+                    nivel = "8b+";
                     break;
                 case _8c:
-                    nivel="8c";
+                    nivel = "8c";
                     break;
                 case _8cm:
-                    nivel="8c+";
+                    nivel = "8c+";
                     break;
                 case _9a:
-                    nivel="9a";
+                    nivel = "9a";
                     break;
                 case _9am:
-                    nivel="9a+";
+                    nivel = "9a+";
                     break;
                 case _9b:
-                    nivel="9b";
+                    nivel = "9b";
                     break;
                 case _9bm:
-                    nivel="9b+";
+                    nivel = "9b+";
                     break;
                 case _9c:
-                    nivel="9c";
+                    nivel = "9c";
                     break;
                 case _9cm:
-                    nivel="9c+";
+                    nivel = "9c+";
                     break;
                 default:
                     break;
             }
         }
-        
+
         return new PerfilDTO(red.getUsuarioConectado().getUsername(), red.getUsuarioConectado().getNombre(), red.getUsuarioConectado().getApellidos(), nivel, red.getUsuarioConectado().getEmail(), red.getUsuarioConectado().getFotoperfil());
     }
-    
+
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     @RequestMapping(value = "/perfil/amigos", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody List<AmigosDTO> misAmigos()
-    {
-        List<AmigosDTO> amigos=new ArrayList();
-        
-        String usernameConectado=null;
-        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
-        if(principal instanceof UserDetails)
-        {
-            usernameConectado=((UserDetails) principal).getUsername();
+    public @ResponseBody
+    List<AmigosDTO> misAmigos() {
+        List<AmigosDTO> amigos = new ArrayList();
+
+        String usernameConectado = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            usernameConectado = ((UserDetails) principal).getUsername();
         }
-        
+
         red.setUsername(usernameConectado);
-        
-        for (Usuario amigo : red.getUsuarioConectado().getAmigos()) 
-        {
-            AmigosDTO aux=new AmigosDTO();
+
+        for (Usuario amigo : red.getUsuarioConectado().getAmigos()) {
+            AmigosDTO aux = new AmigosDTO();
             aux.setUsername(amigo.getUsername());
             amigos.add(aux);
         }
-        
+
         return amigos;
     }
-    
+
     /**
-     * 
+     *
      * @param _username
-     * @return 
+     * @return
      */
     @RequestMapping(value = "/perfil/{username}/amigos", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody List<AmigosDTO> amigosPerfil(@PathVariable ("username") String _username)
-    {
-        List<AmigosDTO> amigos=new ArrayList();
-        
+    public @ResponseBody
+    List<AmigosDTO> amigosPerfil(@PathVariable("username") String _username) {
+        List<AmigosDTO> amigos = new ArrayList();
+
         red.setUsername(_username);
-        
-        for (Usuario amigo : red.getUsuarioConectado().getAmigos()) 
-        {
-            AmigosDTO aux=new AmigosDTO();
+
+        for (Usuario amigo : red.getUsuarioConectado().getAmigos()) {
+            AmigosDTO aux = new AmigosDTO();
             aux.setUsername(amigo.getUsername());
             amigos.add(aux);
         }
-        
+
         return amigos;
     }
-    
+
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     @RequestMapping(value = "/perfil/vias", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody List<ViasDTO> misVias()
-    {
-        List<ViasDTO> vias=new ArrayList();
-        
-        String usernameConectado=null;
-        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
-        if(principal instanceof UserDetails)
-        {
-            usernameConectado=((UserDetails) principal).getUsername();
+    public @ResponseBody
+    List<ViasDTO> misVias() {
+        List<ViasDTO> vias = new ArrayList();
+
+        String usernameConectado = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            usernameConectado = ((UserDetails) principal).getUsername();
         }
-        
+
         red.setUsername(usernameConectado);
-        
-        for (Via via : red.getUsuarioConectado().getViasRealizadas()) 
-        {
-            ViasDTO aux=new ViasDTO();
-            
+
+        for (Via via : red.getUsuarioConectado().getViasRealizadas()) {
+            ViasDTO aux = new ViasDTO();
+
             aux.setId_via(via.getId_via());
             aux.setId_mapa(via.getIdv_via());
             aux.setNombre(via.getNombre());
             aux.setSector(via.getSector().getNombreSector());
             aux.setContador(via.getContador());
-            
-            switch(via.getNivel().getNivelAsociado())
-            {
+
+            switch (via.getNivel().getNivelAsociado()) {
                 case _1:
                     aux.setNivel_oficial("1");
                     break;
@@ -609,9 +578,8 @@ public class RedSocialColaborativaRESTFUL
                 default:
                     break;
             }
-            
-            switch(via.getNivel().getNivelAsociado())
-            {
+
+            switch (via.getNivel().getNivelAsociado()) {
                 case _1:
                     aux.setNivel_consensuado("1");
                     break;
@@ -705,45 +673,42 @@ public class RedSocialColaborativaRESTFUL
                 default:
                     break;
             }
-            
+
             vias.add(aux);
         }
-        
+
         return vias;
     }
-    
+
     /**
-     * 
+     *
      * @param _usernameConectado
-     * @return 
+     * @return
      */
     @RequestMapping(value = "/perfil/{username}/vias", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody List<ViasDTO> viasPerfil(@PathVariable("username") String _usernameConectado)
-    {
-        List<ViasDTO> vias=new ArrayList();
-        
-        String usernameConectado=null;
-        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
-        if(principal instanceof UserDetails)
-        {
-            usernameConectado=((UserDetails) principal).getUsername();
+    public @ResponseBody
+    List<ViasDTO> viasPerfil(@PathVariable("username") String _usernameConectado) {
+        List<ViasDTO> vias = new ArrayList();
+
+        String usernameConectado = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            usernameConectado = ((UserDetails) principal).getUsername();
         }
-        
+
         red.setUsername(usernameConectado);
-        
-        for (Via via : red.getUsuarioConectado().getViasRealizadas()) 
-        {
-            ViasDTO aux=new ViasDTO();
-            
+
+        for (Via via : red.getUsuarioConectado().getViasRealizadas()) {
+            ViasDTO aux = new ViasDTO();
+
             aux.setId_via(via.getId_via());
             aux.setId_mapa(via.getIdv_via());
             aux.setNombre(via.getNombre());
             aux.setSector(via.getSector().getNombreSector());
             aux.setContador(via.getContador());
-            
-            switch(via.getNivel().getNivelAsociado())
-            {
+
+            switch (via.getNivel().getNivelAsociado()) {
                 case _1:
                     aux.setNivel_oficial("1");
                     break;
@@ -837,9 +802,8 @@ public class RedSocialColaborativaRESTFUL
                 default:
                     break;
             }
-            
-            switch(via.getNivel().getNivelAsociado())
-            {
+
+            switch (via.getNivel().getNivelAsociado()) {
                 case _1:
                     aux.setNivel_consensuado("1");
                     break;
@@ -933,174 +897,159 @@ public class RedSocialColaborativaRESTFUL
                 default:
                     break;
             }
-            
+
             vias.add(aux);
         }
-        
+
         return vias;
     }
-    
+
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     @RequestMapping(value = "perfil/numeropeticiones", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody NumeroPeticionesDTO numeroPeticionesAmistadPendientes()
-    {
-        NumeroPeticionesDTO numero=new NumeroPeticionesDTO();
-        
-        String usernameConectado=null;
-        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
-        if(principal instanceof UserDetails)
-        {
-            usernameConectado=((UserDetails) principal).getUsername();
+    public @ResponseBody
+    NumeroPeticionesDTO numeroPeticionesAmistadPendientes() {
+        NumeroPeticionesDTO numero = new NumeroPeticionesDTO();
+
+        String usernameConectado = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            usernameConectado = ((UserDetails) principal).getUsername();
         }
-        
+
         red.setUsername(usernameConectado);
-        
+
         numero.setNumeroPendientes(red.peticionesAmistadRecibidas().size());
-        
+
         return numero;
     }
+
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     @RequestMapping(value = "perfil/peticiones", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody List<PeticionDTO> peticionesAmistadPendientes()
-    {
-        List<PeticionDTO> peticiones=new ArrayList();
-        
-        String usernameConectado=null;
-        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
-        if(principal instanceof UserDetails)
-        {
-            usernameConectado=((UserDetails) principal).getUsername();
+    public @ResponseBody
+    List<PeticionDTO> peticionesAmistadPendientes() {
+        List<PeticionDTO> peticiones = new ArrayList();
+
+        String usernameConectado = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            usernameConectado = ((UserDetails) principal).getUsername();
         }
-        
+
         red.setUsername(usernameConectado);
-        
-        for (PeticionAmistad peticion : red.peticionesAmistadRecibidas())
-        {
-            PeticionDTO aux=new PeticionDTO(peticion.getId_peticion(), peticion.getEmisor().getUsername());
-            
+
+        for (PeticionAmistad peticion : red.peticionesAmistadRecibidas()) {
+            PeticionDTO aux = new PeticionDTO(peticion.getId_peticion(), peticion.getEmisor().getUsername());
+
             peticiones.add(aux);
         }
-        
+
         return peticiones;
     }
-    
+
     /**
-     * 
-     * @param _usuario 
+     *
+     * @param _usuario
      */
     @RequestMapping(value = "/perfil/peticiones", method = RequestMethod.POST, consumes = "application/json")
-    public void solicitarAmistad(@RequestBody UsernameDTO _usuario)
-    {
-        String usernameConectado=null;
-        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
-        if(principal instanceof UserDetails)
-        {
-            usernameConectado=((UserDetails) principal).getUsername();
+    public void solicitarAmistad(@RequestBody UsernameDTO _usuario) {
+        String usernameConectado = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            usernameConectado = ((UserDetails) principal).getUsername();
         }
-        
+
         red.setUsername(usernameConectado);
-        
-        try
-        {
+
+        try {
             red.enviarPeticionAmistad(_usuario.getUsername());
-        }
-        catch(exceptionsBusiness.PeticionYaEnviada ex)
-        {
+        } catch (exceptionsBusiness.PeticionYaEnviada ex) {
             throw new exceptionsBusiness.PeticionYaEnviada();
         }
-        
+
     }
-    
+
     /**
-     * 
-     * @param _peticion 
+     *
+     * @param _peticion
      */
     @RequestMapping(value = "/perfil/peticiones", method = RequestMethod.PUT, consumes = "application/json")
-    public void confirmarAmistad(@RequestBody GestionarPeticionDTO _peticion)
-    {
-        String usernameConectado=null;
-        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
-        if(principal instanceof UserDetails)
-        {
-            usernameConectado=((UserDetails) principal).getUsername();
+    public void confirmarAmistad(@RequestBody GestionarPeticionDTO _peticion) {
+        String usernameConectado = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            usernameConectado = ((UserDetails) principal).getUsername();
         }
-        
+
         red.setUsername(usernameConectado);
-        
+
         red.confirmarPeticion(_peticion.getIdPeticion(), _peticion.isConf());
     }
-    
+
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     @RequestMapping(value = "/username", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody ResponseEntity<?> prueba2()
-    {
-        UsernameDTO aux=new UsernameDTO();
-        String usernameConectado=null;
-        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
-        if(principal instanceof UserDetails)
-        {
-            usernameConectado=((UserDetails) principal).getUsername();
+    public @ResponseBody
+    ResponseEntity<?> prueba2() {
+        UsernameDTO aux = new UsernameDTO();
+        String usernameConectado = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            usernameConectado = ((UserDetails) principal).getUsername();
         }
-        
-        if(usernameConectado==null)
-        {
+
+        if (usernameConectado == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        
+
         aux.setUsername(usernameConectado);
-        
+
         return new ResponseEntity<>(aux, HttpStatus.OK);
     }
-    
+
     /**
-     * 
-     * @param _escuela 
-     * @throws java.io.IOException 
+     *
+     * @param _escuela
+     * @throws java.io.IOException
      */
     @RequestMapping(value = "/escuelas", method = RequestMethod.POST, consumes = "application/json")
-    public void nuevaEscuela(@RequestBody EscuelaDTO _escuela) throws IOException
-    {
+    public void nuevaEscuela(@RequestBody EscuelaDTO _escuela) throws IOException {
         red.nuevaEscuela(_escuela.getNombre(), _escuela.getDescripcion(), _escuela.getHorario(), _escuela.getDir_foto(), _escuela.getCod_provincia());
     }
-    
+
     /**
-     * 
+     *
      * @param _id_escuela
-     * @param _sector 
-     * @throws java.io.IOException 
+     * @param _sector
+     * @throws java.io.IOException
      */
     @RequestMapping(value = "/escuelas/{id_escuela}/sectores", method = RequestMethod.POST, consumes = "application/json")
-    public void nuevoSector(@PathVariable ("id_escuela") Integer _id_escuela, @RequestBody SectorDTO _sector) throws IOException
-    {
+    public void nuevoSector(@PathVariable("id_escuela") Integer _id_escuela, @RequestBody SectorDTO _sector) throws IOException {
         red.nuevoSector(_id_escuela, _sector.getOrientacion(), _sector.getNombre(), _sector.getDir_foto());
     }
-    
+
     /**
-     * 
+     *
      * @param _id_sector
-     * @param _via 
+     * @param _via
      */
     @RequestMapping(value = "/sectores/{id_sector}/vias", method = RequestMethod.POST, consumes = "application/json")
-    public void nuevaVia(@PathVariable ("id_sector") Integer _id_sector, @RequestBody NuevaViaDTO _via)
-    {
-        Nivel nivel=new Nivel();
-        
-        switch (_via.getNivel_oficial())
-        {
+    public void nuevaVia(@PathVariable("id_sector") Integer _id_sector, @RequestBody NuevaViaDTO _via) {
+        Nivel nivel = new Nivel();
+
+        switch (_via.getNivel_oficial()) {
             case "1":
                 nivel.setNivel(Nivel.nivelAsociado._1);
                 break;
@@ -1191,87 +1140,80 @@ public class RedSocialColaborativaRESTFUL
             case "9c+":
                 nivel.setNivel(Nivel.nivelAsociado._9cm);
                 break;
-                
+
             default:
                 break;
         }
-        
+
         red.nuevaVia(_id_sector, _via.getNombre(), nivel, _via.getId_mapa());
     }
-    
+
     /**
-     * 
+     *
      * @param _cod_provincia
-     * @return 
+     * @return
      */
     @RequestMapping(value = "/escuelas/{cod_prov}", method = RequestMethod.GET, produces = "application/json")
-    public List<EscuelasDTO> escuelasProv(@PathVariable("cod_prov") Integer _cod_provincia)
-    {
-        List<EscuelasDTO> aux_list=new ArrayList();
-        
-        for (Escuela escuela : red.escuelasProvincia(_cod_provincia))
-        {
-            EscuelasDTO aux=new EscuelasDTO();
+    public List<EscuelasDTO> escuelasProv(@PathVariable("cod_prov") Integer _cod_provincia) {
+        List<EscuelasDTO> aux_list = new ArrayList();
+
+        for (Escuela escuela : red.escuelasProvincia(_cod_provincia)) {
+            EscuelasDTO aux = new EscuelasDTO();
             aux.setId_escuela(escuela.getId_escuela());
             aux.setNombre(escuela.getNombreEscuela());
             aux.setDescripcion(escuela.getDescripcion());
             aux.setFoto(escuela.getFotoEscuela());
             aux.setHorario(escuela.getHorario());
-            
+
             aux_list.add(aux);
         }
-        
+
         return aux_list;
     }
-    
+
     /**
-     * 
+     *
      * @param _cod_escuela
-     * @return 
+     * @return
      */
     @RequestMapping(value = "/sectores/{cod_escuela}", method = RequestMethod.GET, produces = "application/json")
-    public List<SectoresDTO> sectoresEsc(@PathVariable("cod_escuela") Integer _cod_escuela)
-    {
-        List<SectoresDTO> aux_list=new ArrayList();
-        
-        for (Sector sector : red.sectoresEscuela(_cod_escuela)) 
-        {
-            SectoresDTO aux=new SectoresDTO();
-            
+    public List<SectoresDTO> sectoresEsc(@PathVariable("cod_escuela") Integer _cod_escuela) {
+        List<SectoresDTO> aux_list = new ArrayList();
+
+        for (Sector sector : red.sectoresEscuela(_cod_escuela)) {
+            SectoresDTO aux = new SectoresDTO();
+
             aux.setId_sector(sector.getId_sector());
             aux.setNombre(sector.getNombreSector());
             aux.setEscuela(sector.getEscuela().getNombreEscuela());
             aux.setOrientacion(sector.getOrientacion().getOrientacion().name());
             aux.setFoto(sector.getFotoSector());
-            
+
             aux_list.add(aux);
         }
-        
+
         return aux_list;
     }
-    
+
     /**
-     * 
+     *
      * @param _cod_sector
-     * @return 
+     * @return
      */
     @RequestMapping(value = "/vias/{cod_sector}", method = RequestMethod.GET, produces = "application/json")
-    public List<ViasDTO> viasSector(@PathVariable("cod_sector") Integer _cod_sector)
-    {
-        List<ViasDTO> vias=new ArrayList();
-        
-        for (Via via : red.viasSector(_cod_sector)) 
-        {
-            ViasDTO aux=new ViasDTO();
-            
+    public List<ViasDTO> viasSector(@PathVariable("cod_sector") Integer _cod_sector) {
+        List<ViasDTO> vias = new ArrayList();
+
+        for (Via via : red.viasSector(_cod_sector)) {
+            ViasDTO aux = new ViasDTO();
+
             aux.setId_via(via.getId_via());
             aux.setId_mapa(via.getIdv_via());
             aux.setNombre(via.getNombre());
             aux.setSector(via.getSector().getNombreSector());
             aux.setContador(via.getContador());
-            
-            switch(via.getNivel().getNivelAsociado())
-            {
+
+            switch (via.getNivel().getNivelAsociado()) {
                 case _1:
                     aux.setNivel_oficial("1");
                     break;
@@ -1365,9 +1307,8 @@ public class RedSocialColaborativaRESTFUL
                 default:
                     break;
             }
-            
-            switch(via.getNivel().getNivelAsociado())
-            {
+
+            switch (via.getNivel().getNivelAsociado()) {
                 case _1:
                     aux.setNivel_consensuado("1");
                     break;
@@ -1461,75 +1402,67 @@ public class RedSocialColaborativaRESTFUL
                 default:
                     break;
             }
-            
+
             vias.add(aux);
         }
-        
+
         return vias;
     }
-    
+
     /**
-     * 
+     *
      * @param _cod_via
-     * @param _comentario 
+     * @param _comentario
      */
     @RequestMapping(value = "/comentarios/{cod_via}", method = RequestMethod.POST, produces = "application/json")
-    public void add_comentario_via(@PathVariable("cod_via") Integer _cod_via, @RequestBody ComentarioDTO _comentario)
-    {
-        String usernameConectado=null;
-        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
-        if(principal instanceof UserDetails)
-        {
-            usernameConectado=((UserDetails) principal).getUsername();
+    public void add_comentario_via(@PathVariable("cod_via") Integer _cod_via, @RequestBody ComentarioDTO _comentario) {
+        String usernameConectado = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            usernameConectado = ((UserDetails) principal).getUsername();
         }
-        
+
         red.setUsername(usernameConectado);
-        
+
         red.comentarVia(_cod_via, _comentario.getValor_comentario());
     }
-    
+
     /**
-     * 
+     *
      * @param _cod_via
-     * @return 
+     * @return
      */
     @RequestMapping(value = "/comentarios/{cod_via}", method = RequestMethod.GET, produces = "application/json")
-    public List<ComentariosDTO> comentarios_via(@PathVariable("cod_via") Integer _cod_via)
-    {
-        List<ComentariosDTO> comentarios=new ArrayList();
-        
-        for (Comentario comentario : red.comentariosVia(_cod_via)) 
-        {
-            ComentariosDTO aux=new ComentariosDTO();
-            
+    public List<ComentariosDTO> comentarios_via(@PathVariable("cod_via") Integer _cod_via) {
+        List<ComentariosDTO> comentarios = new ArrayList();
+
+        for (Comentario comentario : red.comentariosVia(_cod_via)) {
+            ComentariosDTO aux = new ComentariosDTO();
+
             aux.setUsername(comentario.getUsuario().getUsername());
             aux.setValor_comentario(comentario.getComentario());
-            
+
             comentarios.add(aux);
         }
-        
+
         return comentarios;
     }
-    
+
     @RequestMapping(value = "/perfil/vias/{id_via}", method = RequestMethod.POST, consumes = "application/json")
-    public void realizarVia(@PathVariable ("id_via") Integer _id_via, @RequestBody ValorarViaDTO _valoracion)
-    {
-        String usernameConectado=null;
-        Object principal=SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
-        if(principal instanceof UserDetails)
-        {
-            usernameConectado=((UserDetails) principal).getUsername();
+    public void realizarVia(@PathVariable("id_via") Integer _id_via, @RequestBody ValorarViaDTO _valoracion) {
+        String usernameConectado = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            usernameConectado = ((UserDetails) principal).getUsername();
         }
-        
+
         red.setUsername(usernameConectado);
-        
-        
-        Nivel nivel=new Nivel();
-        
-        switch (_valoracion.getNivel())
-        {
+
+        Nivel nivel = new Nivel();
+
+        switch (_valoracion.getNivel()) {
             case "1":
                 nivel.setNivel(Nivel.nivelAsociado._1);
                 break;
@@ -1620,13 +1553,35 @@ public class RedSocialColaborativaRESTFUL
             case "9c+":
                 nivel.setNivel(Nivel.nivelAsociado._9cm);
                 break;
-                
+
             default:
                 break;
         }
-        
+
         red.realizarVia(_id_via, nivel, _valoracion.getValoracion());
-        
+
     }
-    
+
+    /**
+     * 
+     * @param _username
+     * @return 
+     */
+    @RequestMapping(value = "/amistad/{username}", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody ComprobarAmigoDTO comprobarAmistad(@PathVariable("username") String _username) 
+    {        
+        String usernameConectado = null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            usernameConectado = ((UserDetails) principal).getUsername();
+        }
+
+        red.setUsername(usernameConectado);
+        
+        ComprobarAmigoDTO comprobarAmigo=new ComprobarAmigoDTO(red.esAmigo(_username));
+        
+        return comprobarAmigo;
+    }
+
 }
