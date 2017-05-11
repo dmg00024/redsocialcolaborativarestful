@@ -306,11 +306,13 @@ public class RedSocialColaborativaRESTFUL {
     public @ResponseBody
     PerfilDTO verPerfil(@PathVariable("username") String _username) {
         red.setUsername(_username);
+        
+        Usuario u=red.getDaoUsuario().obtenerUsuario(_username);
 
         String nivel = null;
 
-        if (null != red.getUsuarioConectado().getNivel().getNivelAsociado()) {
-            switch (red.getUsuarioConectado().getNivel().getNivelAsociado()) {
+        if (null != u.getNivel().getNivelAsociado()) {
+            switch (u.getNivel().getNivelAsociado()) {
                 case _1:
                     nivel = "1";
                     break;
@@ -406,7 +408,7 @@ public class RedSocialColaborativaRESTFUL {
             }
         }
 
-        return new PerfilDTO(red.getUsuarioConectado().getUsername(), red.getUsuarioConectado().getNombre(), red.getUsuarioConectado().getApellidos(), nivel, red.getUsuarioConectado().getEmail(), red.getUsuarioConectado().getFotoperfil());
+        return new PerfilDTO(u.getUsername(), u.getNombre(), u.getApellidos(), nivel, u.getEmail(), u.getFotoperfil());
     }
 
     /**
@@ -447,8 +449,10 @@ public class RedSocialColaborativaRESTFUL {
         List<AmigosDTO> amigos = new ArrayList();
 
         red.setUsername(_username);
+        
+        Usuario u=red.getDaoUsuario().obtenerUsuario(_username);
 
-        for (Usuario amigo : red.getUsuarioConectado().getAmigos()) {
+        for (Usuario amigo : u.getAmigos()) {
             AmigosDTO aux = new AmigosDTO();
             aux.setUsername(amigo.getUsername());
             amigos.add(aux);
@@ -690,16 +694,11 @@ public class RedSocialColaborativaRESTFUL {
     List<ViasDTO> viasPerfil(@PathVariable("username") String _usernameConectado) {
         List<ViasDTO> vias = new ArrayList();
 
-        String usernameConectado = null;
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        red.setUsername(_usernameConectado);
+        
+        Usuario u=red.getDaoUsuario().obtenerUsuario(_usernameConectado);
 
-        if (principal instanceof UserDetails) {
-            usernameConectado = ((UserDetails) principal).getUsername();
-        }
-
-        red.setUsername(usernameConectado);
-
-        for (Via via : red.getUsuarioConectado().getViasRealizadas()) {
+        for (Via via : u.getViasRealizadas()) {
             ViasDTO aux = new ViasDTO();
 
             aux.setId_via(via.getId_via());

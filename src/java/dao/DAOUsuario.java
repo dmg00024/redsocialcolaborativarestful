@@ -65,7 +65,7 @@ public class DAOUsuario
      * @return devuelve el usuario de la base de datos a partir de su _username
      */
     public Usuario obtenerUsuario(String _username)
-    {
+    {   
         return em.find(Usuario.class, _username);
     }
     

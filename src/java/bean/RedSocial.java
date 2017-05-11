@@ -287,11 +287,6 @@ public class RedSocial
     {
         usuarioConectado=daoUsuario.obtenerUsuario(username);
         
-        usuarioConectado.getAmigos().size();
-        usuarioConectado.getPeticionesAmistad().size();
-        usuarioConectado.getViasRealizadas().size();
-        usuarioConectado.getComentarios().size();
-        
         return usuarioConectado;
     }
 
