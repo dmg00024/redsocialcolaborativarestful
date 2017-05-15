@@ -16,6 +16,7 @@ public class EscuelasDTO
     private String descripcion;
     private byte[] foto;
     private String horario;
+    private String provincia;
 
     /**
      * 
@@ -132,5 +133,23 @@ public class EscuelasDTO
     {
         this.horario = horario;
     }
-    
+
+    /**
+     * 
+     * @return 
+     */
+    public String getProvincia() 
+    {
+        return provincia;
+    }
+
+    /**
+     * 
+     * @param provincia 
+     */
+    public void setProvincia(String provincia) 
+    {
+        this.provincia = provincia;
+    }
+        
 }

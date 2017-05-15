@@ -19,6 +19,7 @@ import dto.NuevoUsuarioDTO;
 import dto.NumeroPeticionesDTO;
 import dto.PerfilDTO;
 import dto.PeticionDTO;
+import dto.ProvinciaDTO;
 import dto.SectorDTO;
 import dto.SectoresDTO;
 import dto.UsernameDTO;
@@ -32,6 +33,7 @@ import modelo.Comentario;
 import modelo.Escuela;
 import modelo.Nivel;
 import modelo.PeticionAmistad;
+import modelo.Provincia;
 import modelo.Sector;
 import modelo.Usuario;
 import modelo.Via;
@@ -1162,7 +1164,8 @@ public class RedSocialColaborativaRESTFUL {
             aux.setDescripcion(escuela.getDescripcion());
             aux.setFoto(escuela.getFotoEscuela());
             aux.setHorario(escuela.getHorario());
-
+            aux.setProvincia(escuela.getUbicacion().getProvincia());
+            
             aux_list.add(aux);
         }
 
@@ -1559,5 +1562,20 @@ public class RedSocialColaborativaRESTFUL {
         red.realizarVia(_id_via, nivel, _valoracion.getValoracion());
 
     }
-
+    
+    /**
+     * 
+     * @param cod_provicia
+     * @return 
+     */
+    @RequestMapping(value = "/provincia/{cod_provincia}", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody ProvinciaDTO provincia(@PathVariable ("cod_provincia") Integer cod_provicia)
+    {
+        Provincia provincia=red.getDaoProvincia().obtenerProvincia(cod_provicia);
+        
+        ProvinciaDTO provinciaDTO=new ProvinciaDTO(provincia.getProvincia());
+        
+        return provinciaDTO;
+    }
 }
+
