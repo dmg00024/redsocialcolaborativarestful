@@ -10,7 +10,6 @@ import dto.ActualizarUsuarioDTO;
 import dto.AmigosDTO;
 import dto.ComentarioDTO;
 import dto.ComentariosDTO;
-import dto.ComprobarAmigoDTO;
 import dto.EscuelaDTO;
 import dto.EscuelasDTO;
 import dto.GestionarPeticionDTO;

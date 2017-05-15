@@ -20,10 +20,8 @@ import exceptionsBusiness.ErrorEnvioEmail;
 import exceptionsBusiness.PeticionYaEnviada;
 import exceptionsBusiness.TokenCaducado;
 import exceptionsBusiness.UsernameNoDisponible;
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,7 +49,6 @@ import modelo.Via;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import sun.misc.BASE64Decoder;
 import java.util.Base64;
 
 /**
@@ -612,8 +609,8 @@ public class RedSocial
         
         if(_dir_foto != null)
         {
-            File foto=new File(_dir_foto);
-            byte[] _fotoescuela=Files.readAllBytes(foto.toPath());
+            _dir_foto=_dir_foto.substring(23);
+            byte[] _fotoescuela = Base64.getDecoder().decode(_dir_foto);
             e.setFotoEscuela(_fotoescuela);
         }
         
@@ -644,8 +641,8 @@ public class RedSocial
         
         if(_dir_foto != null)
         {
-            File foto=new File(_dir_foto);
-            byte[] _fotosector=Files.readAllBytes(foto.toPath());
+            _dir_foto=_dir_foto.substring(23);
+            byte[] _fotosector = Base64.getDecoder().decode(_dir_foto);
             s.setFotoSector(_fotosector);
         }
         
