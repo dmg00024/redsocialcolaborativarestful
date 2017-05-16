@@ -488,6 +488,7 @@ public class RedSocialColaborativaRESTFUL {
             aux.setNombre(via.getNombre());
             aux.setSector(via.getSector().getNombreSector());
             aux.setContador(via.getContador());
+            aux.setEstrellas(via.getEstrellas());
 
             switch (via.getNivel().getNivelAsociado()) {
                 case _1:
@@ -707,6 +708,7 @@ public class RedSocialColaborativaRESTFUL {
             aux.setNombre(via.getNombre());
             aux.setSector(via.getSector().getNombreSector());
             aux.setContador(via.getContador());
+            aux.setEstrellas(via.getEstrellas());
 
             switch (via.getNivel().getNivelAsociado()) {
                 case _1:
@@ -1576,6 +1578,247 @@ public class RedSocialColaborativaRESTFUL {
         ProvinciaDTO provinciaDTO=new ProvinciaDTO(provincia.getProvincia());
         
         return provinciaDTO;
+    }
+    
+    /**
+     * 
+     * @param cod_escuela
+     * @return 
+     */
+    @RequestMapping(value = "/escuela/{cod_escuela}", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody EscuelasDTO datosEscuela(@PathVariable ("cod_escuela") Integer cod_escuela)
+    {
+        Escuela e=red.getDaoEscuela().obtenerEscuela(cod_escuela);
+        
+        EscuelasDTO escuelasDTO=new EscuelasDTO(e.getId_escuela(), e.getNombreEscuela(), e.getDescripcion(), e.getFotoEscuela(), e.getHorario());
+        escuelasDTO.setProvincia(e.getUbicacion().getProvincia());
+        
+        return escuelasDTO;
+    }
+    
+    /**
+     * 
+     * @param cod_sector
+     * @return 
+     */
+    @RequestMapping(value = "/sector/{cod_sector}", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody SectoresDTO datosSector(@PathVariable ("cod_sector") Integer cod_sector)
+    {
+        Sector s=red.getDaoSector().obtenerSector(cod_sector);
+        
+        return new SectoresDTO(s.getId_sector(), s.getOrientacion().getOrientacion().toString(), s.getNombreSector(), s.getFotoSector());
+    }
+    
+    /**
+     * 
+     * @param cod_via
+     * @return 
+     */
+    @RequestMapping(value = "/via/{cod_via}", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody ViasDTO datosVia(@PathVariable ("cod_via") Integer cod_via)
+    {
+        Via via=red.getDaoVia().obtenerVia(cod_via);
+        
+        ViasDTO aux=new ViasDTO();
+        
+        aux.setId_via(via.getId_via());
+        aux.setId_mapa(via.getIdv_via());
+        aux.setNombre(via.getNombre());
+        aux.setSector(via.getSector().getNombreSector());
+        aux.setContador(via.getContador());
+        aux.setEstrellas(via.getEstrellas());
+        
+        switch (via.getNivel().getNivelAsociado()) {
+                case _1:
+                    aux.setNivel_oficial("1");
+                    break;
+                case _2:
+                    aux.setNivel_oficial("2");
+                    break;
+                case _3:
+                    aux.setNivel_oficial("3");
+                    break;
+                case _4:
+                    aux.setNivel_oficial("4");
+                    break;
+                case _5:
+                    aux.setNivel_oficial("5");
+                    break;
+                case _5m:
+                    aux.setNivel_oficial("5+");
+                    break;
+                case _6a:
+                    aux.setNivel_oficial("6a");
+                    break;
+                case _6am:
+                    aux.setNivel_oficial("6a+");
+                    break;
+                case _6b:
+                    aux.setNivel_oficial("6b");
+                    break;
+                case _6bm:
+                    aux.setNivel_oficial("6b+");
+                    break;
+                case _6c:
+                    aux.setNivel_oficial("6c");
+                    break;
+                case _6cm:
+                    aux.setNivel_oficial("6c+");
+                    break;
+                case _7a:
+                    aux.setNivel_oficial("7a");
+                    break;
+                case _7am:
+                    aux.setNivel_oficial("7a+");
+                    break;
+                case _7b:
+                    aux.setNivel_oficial("7b");
+                    break;
+                case _7bm:
+                    aux.setNivel_oficial("7b+");
+                    break;
+                case _7c:
+                    aux.setNivel_oficial("7c");
+                    break;
+                case _7cm:
+                    aux.setNivel_oficial("7c+");
+                    break;
+                case _8a:
+                    aux.setNivel_oficial("8a");
+                    break;
+                case _8am:
+                    aux.setNivel_oficial("8a+");
+                    break;
+                case _8b:
+                    aux.setNivel_oficial("8b");
+                    break;
+                case _8bm:
+                    aux.setNivel_oficial("8b+");
+                    break;
+                case _8c:
+                    aux.setNivel_oficial("8c");
+                    break;
+                case _8cm:
+                    aux.setNivel_oficial("8c+");
+                    break;
+                case _9a:
+                    aux.setNivel_oficial("9a");
+                    break;
+                case _9am:
+                    aux.setNivel_oficial("9a+");
+                    break;
+                case _9b:
+                    aux.setNivel_oficial("9b");
+                    break;
+                case _9bm:
+                    aux.setNivel_oficial("9b+");
+                    break;
+                case _9c:
+                    aux.setNivel_oficial("9c");
+                    break;
+                case _9cm:
+                    aux.setNivel_oficial("9c+");
+                    break;
+                default:
+                    break;
+            }
+
+            switch (via.getNivel().getNivelAsociado()) {
+                case _1:
+                    aux.setNivel_consensuado("1");
+                    break;
+                case _2:
+                    aux.setNivel_consensuado("2");
+                    break;
+                case _3:
+                    aux.setNivel_consensuado("3");
+                    break;
+                case _4:
+                    aux.setNivel_consensuado("4");
+                    break;
+                case _5:
+                    aux.setNivel_consensuado("5");
+                    break;
+                case _5m:
+                    aux.setNivel_consensuado("5+");
+                    break;
+                case _6a:
+                    aux.setNivel_consensuado("6a");
+                    break;
+                case _6am:
+                    aux.setNivel_consensuado("6a+");
+                    break;
+                case _6b:
+                    aux.setNivel_consensuado("6b");
+                    break;
+                case _6bm:
+                    aux.setNivel_consensuado("6b+");
+                    break;
+                case _6c:
+                    aux.setNivel_consensuado("6c");
+                    break;
+                case _6cm:
+                    aux.setNivel_consensuado("6c+");
+                    break;
+                case _7a:
+                    aux.setNivel_consensuado("7a");
+                    break;
+                case _7am:
+                    aux.setNivel_consensuado("7a+");
+                    break;
+                case _7b:
+                    aux.setNivel_consensuado("7b");
+                    break;
+                case _7bm:
+                    aux.setNivel_consensuado("7b+");
+                    break;
+                case _7c:
+                    aux.setNivel_consensuado("7c");
+                    break;
+                case _7cm:
+                    aux.setNivel_consensuado("7c+");
+                    break;
+                case _8a:
+                    aux.setNivel_consensuado("8a");
+                    break;
+                case _8am:
+                    aux.setNivel_consensuado("8a+");
+                    break;
+                case _8b:
+                    aux.setNivel_consensuado("8b");
+                    break;
+                case _8bm:
+                    aux.setNivel_consensuado("8b+");
+                    break;
+                case _8c:
+                    aux.setNivel_consensuado("8c");
+                    break;
+                case _8cm:
+                    aux.setNivel_consensuado("8c+");
+                    break;
+                case _9a:
+                    aux.setNivel_consensuado("9a");
+                    break;
+                case _9am:
+                    aux.setNivel_consensuado("9a+");
+                    break;
+                case _9b:
+                    aux.setNivel_consensuado("9b");
+                    break;
+                case _9bm:
+                    aux.setNivel_consensuado("9b+");
+                    break;
+                case _9c:
+                    aux.setNivel_consensuado("9c");
+                    break;
+                case _9cm:
+                    aux.setNivel_consensuado("9c+");
+                    break;
+                default:
+                    break;
+            }
+                
+        return aux;
     }
 }
 

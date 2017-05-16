@@ -18,6 +18,7 @@ public class ViasDTO
     private String nivel_oficial;
     private String nivel_consensuado;
     private Integer contador;
+    private Integer estrellas;
 
     /**
      * 
@@ -172,6 +173,24 @@ public class ViasDTO
     public void setContador(Integer contador)
     {
         this.contador = contador;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public Integer getEstrellas() 
+    {
+        return estrellas;
+    }
+
+    /**
+     * 
+     * @param estrellas 
+     */
+    public void setEstrellas(Integer estrellas) 
+    {
+        this.estrellas = estrellas;
     }
     
 }
