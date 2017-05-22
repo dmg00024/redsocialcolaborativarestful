@@ -1159,14 +1159,12 @@ public class RedSocialColaborativaRESTFUL {
     public List<EscuelasDTO> escuelasProv(@PathVariable("cod_prov") Integer _cod_provincia) {
         List<EscuelasDTO> aux_list = new ArrayList();
 
-        for (Escuela escuela : red.escuelasProvincia(_cod_provincia)) {
+        for (Escuela escuela : red.escuelasProvincia(_cod_provincia))
+        {
             EscuelasDTO aux = new EscuelasDTO();
+            
             aux.setId_escuela(escuela.getId_escuela());
             aux.setNombre(escuela.getNombreEscuela());
-            aux.setDescripcion(escuela.getDescripcion());
-            aux.setFoto(escuela.getFotoEscuela());
-            aux.setHorario(escuela.getHorario());
-            aux.setProvincia(escuela.getUbicacion().getProvincia());
             
             aux_list.add(aux);
         }
@@ -1183,14 +1181,12 @@ public class RedSocialColaborativaRESTFUL {
     public List<SectoresDTO> sectoresEsc(@PathVariable("cod_escuela") Integer _cod_escuela) {
         List<SectoresDTO> aux_list = new ArrayList();
 
-        for (Sector sector : red.sectoresEscuela(_cod_escuela)) {
+        for (Sector sector : red.sectoresEscuela(_cod_escuela))
+        {
             SectoresDTO aux = new SectoresDTO();
-
+            
             aux.setId_sector(sector.getId_sector());
             aux.setNombre(sector.getNombreSector());
-            aux.setEscuela(sector.getEscuela().getNombreEscuela());
-            aux.setOrientacion(sector.getOrientacion().getOrientacion().name());
-            aux.setFoto(sector.getFotoSector());
 
             aux_list.add(aux);
         }
@@ -1215,6 +1211,7 @@ public class RedSocialColaborativaRESTFUL {
             aux.setNombre(via.getNombre());
             aux.setSector(via.getSector().getNombreSector());
             aux.setContador(via.getContador());
+            aux.setEstrellas(via.getEstrellas());
 
             switch (via.getNivel().getNivelAsociado()) {
                 case _1:
@@ -1606,7 +1603,11 @@ public class RedSocialColaborativaRESTFUL {
     {
         Sector s=red.getDaoSector().obtenerSector(cod_sector);
         
-        return new SectoresDTO(s.getId_sector(), s.getOrientacion().getOrientacion().toString(), s.getNombreSector(), s.getFotoSector());
+        SectoresDTO dto=new SectoresDTO(s.getId_sector(), s.getOrientacion().getOrientacion().toString(), s.getNombreSector(), s.getFotoSector());
+        
+        dto.setEscuela(s.getEscuela().getNombreEscuela());
+        
+        return dto;
     }
     
     /**
@@ -1627,6 +1628,7 @@ public class RedSocialColaborativaRESTFUL {
         aux.setSector(via.getSector().getNombreSector());
         aux.setContador(via.getContador());
         aux.setEstrellas(via.getEstrellas());
+        aux.setSector(via.getSector().getNombreSector());
         
         switch (via.getNivel().getNivelAsociado()) {
                 case _1:

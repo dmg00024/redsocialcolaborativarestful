@@ -449,11 +449,11 @@ public class RedSocial
      * @param _nombre
      * @param _apellidos
      * @param _email
-     * @param dir_foto
+     * @param _dir_foto
      * @throws IOException 
      */
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.CambiarPasswordException.class)
-    public void actualizarPerfilUsuario(String _nombre, String _apellidos, String _email, String dir_foto) throws IOException
+    public void actualizarPerfilUsuario(String _nombre, String _apellidos, String _email, String _dir_foto) throws IOException
     {
         usuarioConectado=daoUsuario.obtenerUsuario(username);
         
@@ -461,10 +461,18 @@ public class RedSocial
         usuarioConectado.setApellidos(_apellidos);
         usuarioConectado.setEmail(_email);        
         
-        if(dir_foto != null)
+        if(_dir_foto != null)
         {
-            dir_foto=dir_foto.substring(23);
-            byte[] _fotoperfil = Base64.getDecoder().decode(dir_foto);
+            if(_dir_foto.contains("png"))
+            {
+                _dir_foto=_dir_foto.substring(22);
+            }
+            else
+            {
+                _dir_foto=_dir_foto.substring(23);
+            }
+            
+            byte[] _fotoperfil = Base64.getMimeDecoder().decode(_dir_foto);
             usuarioConectado.setFotoperfil(_fotoperfil);   
             
         }
@@ -609,8 +617,16 @@ public class RedSocial
         
         if(_dir_foto != null)
         {
-            _dir_foto=_dir_foto.substring(23);
-            byte[] _fotoescuela = Base64.getDecoder().decode(_dir_foto);
+            if(_dir_foto.contains("png"))
+            {
+                _dir_foto=_dir_foto.substring(22);
+            }
+            else
+            {
+                _dir_foto=_dir_foto.substring(23);
+            }
+            
+            byte[] _fotoescuela = Base64.getMimeDecoder().decode(_dir_foto);
             e.setFotoEscuela(_fotoescuela);
         }
         
@@ -641,8 +657,16 @@ public class RedSocial
         
         if(_dir_foto != null)
         {
-            _dir_foto=_dir_foto.substring(23);
-            byte[] _fotosector = Base64.getDecoder().decode(_dir_foto);
+            if(_dir_foto.contains("png"))
+            {
+                _dir_foto=_dir_foto.substring(22);
+            }
+            else
+            {
+                _dir_foto=_dir_foto.substring(23);
+            }
+            
+            byte[] _fotosector = Base64.getMimeDecoder().decode(_dir_foto);
             s.setFotoSector(_fotosector);
         }
         
