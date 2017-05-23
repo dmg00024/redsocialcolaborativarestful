@@ -1187,6 +1187,8 @@ public class RedSocialColaborativaRESTFUL {
             
             aux.setId_sector(sector.getId_sector());
             aux.setNombre(sector.getNombreSector());
+            aux.setOrientacion(sector.getOrientacion().getOrientacion().toString());
+            aux.setEscuela(sector.getEscuela().getNombreEscuela());
 
             aux_list.add(aux);
         }
