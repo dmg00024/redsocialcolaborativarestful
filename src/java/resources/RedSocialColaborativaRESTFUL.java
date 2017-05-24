@@ -1727,7 +1727,7 @@ public class RedSocialColaborativaRESTFUL {
                     break;
             }
 
-            switch (via.getNivel().getNivelAsociado()) {
+            switch (via.getNivelConsensuado().getNivelAsociado()) {
                 case _1:
                     aux.setNivel_consensuado("1");
                     break;
