@@ -1454,7 +1454,7 @@ public class RedSocialColaborativaRESTFUL {
             aux.setUsername(comentario.getUsuario().getUsername());
             aux.setValor_comentario(comentario.getComentario());
             aux.setPuntuacion(comentario.getPuntuación());
-            aux.setValoracion(comentario.getComentario());
+            aux.setValoracion(comentario.getValoracion());
             
             dia=comentario.getFecha().get(Calendar.DAY_OF_MONTH);
             mes=comentario.getFecha().get(Calendar.MONTH);
