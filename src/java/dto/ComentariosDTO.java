@@ -13,6 +13,10 @@ public class ComentariosDTO
 {
     private String valor_comentario;
     private String username;
+    private Integer puntuacion;
+    private String valoracion;
+    private String fecha;
+    private String hora;
 
     /**
      * 
@@ -68,5 +72,78 @@ public class ComentariosDTO
     {
         this.username = username;
     }
+
+    /**
+     * 
+     * @return 
+     */
+    public Integer getPuntuacion() 
+    {
+        return puntuacion;
+    }
+
+    /**
+     * 
+     * @param puntuacion 
+     */
+    public void setPuntuacion(Integer puntuacion)
+    {
+        this.puntuacion = puntuacion;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public String getValoracion()
+    {
+        return valoracion;
+    }
+
+    /**
+     * 
+     * @param valoracion 
+     */
+    public void setValoracion(String valoracion)
+    {
+        this.valoracion = valoracion;
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    public String getFecha()
+    {
+        return fecha;
+    }
+
+    /**
+     * 
+     * @param fecha 
+     */
+    public void setFecha(String fecha) 
+    {
+        this.fecha = fecha;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public String getHora()
+    {
+        return hora;
+    }
+
+    /**
+     * 
+     * @param hora 
+     */
+    public void setHora(String hora)
+    {
+        this.hora = hora;
+    }
+    
     
 }

@@ -6,6 +6,8 @@
 package modelo;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 import javax.persistence.*;
 
 /**
@@ -23,11 +25,21 @@ public class Comentario implements Serializable
     private Usuario usuario;
     @ManyToOne (fetch = FetchType.EAGER)
     private Via via;
+    private Integer puntuación;
+    private String valoracion;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private final Calendar fecha;
+    @Temporal(javax.persistence.TemporalType.TIME)
+    private final Date hora;
 
     /**
      * 
      */
-    public Comentario(){}
+    public Comentario()
+    {
+        fecha=Calendar.getInstance();
+        hora=Calendar.getInstance().getTime();
+    }
 
     /**
      * 
@@ -36,6 +48,8 @@ public class Comentario implements Serializable
     public Comentario(Via via) 
     {
         this.via = via;
+        fecha=Calendar.getInstance();
+        hora=Calendar.getInstance().getTime();
     }
 
     /**
@@ -49,6 +63,52 @@ public class Comentario implements Serializable
         this.via = via;
         this.comentario = comentario;
         this.usuario = usuario;
+        fecha=Calendar.getInstance();
+        hora=Calendar.getInstance().getTime();
+    }
+
+    /**
+     * 
+     * @param id_comentario
+     * @param comentario
+     * @param usuario
+     * @param via
+     * @param puntuación
+     * @param valoracion
+     * @param fecha
+     * @param hora 
+     */
+    public Comentario(Integer id_comentario, String comentario, Usuario usuario, Via via, Integer puntuación, String valoracion, Calendar fecha, Date hora) 
+    {
+        this.id_comentario = id_comentario;
+        this.comentario = comentario;
+        this.usuario = usuario;
+        this.via = via;
+        this.puntuación = puntuación;
+        this.valoracion = valoracion;
+        this.fecha = fecha;
+        this.hora = hora;
+    }
+
+    /**
+     * 
+     * @param comentario
+     * @param usuario
+     * @param via
+     * @param puntuación
+     * @param valoracion
+     * @param fecha
+     * @param hora 
+     */
+    public Comentario(String comentario, Usuario usuario, Via via, Integer puntuación, String valoracion, Calendar fecha, Date hora)
+    {
+        this.comentario = comentario;
+        this.usuario = usuario;
+        this.via = via;
+        this.puntuación = puntuación;
+        this.valoracion = valoracion;
+        this.fecha = fecha;
+        this.hora = hora;
     }
     
     /**
@@ -121,6 +181,60 @@ public class Comentario implements Serializable
     public void setVia(Via via) 
     {
         this.via = via;
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    public Integer getPuntuación() 
+    {
+        return puntuación;
+    }
+
+    /**
+     * 
+     * @param puntuación 
+     */
+    public void setPuntuación(Integer puntuación)
+    {
+        this.puntuación = puntuación;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public String getValoracion() 
+    {
+        return valoracion;
+    }
+
+    /**
+     * 
+     * @param valoracion 
+     */
+    public void setValoracion(String valoracion) 
+    {
+        this.valoracion = valoracion;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public Calendar getFecha()
+    {
+        return fecha;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public Date getHora()
+    {
+        return hora;
     }
     
 }

@@ -705,16 +705,20 @@ public class RedSocial
     /**
      * 
      * @param _id_via
-     * @param _valor_comentario 
+     * @param _valor_comentario
+     * @param _puntuacion
+     * @param _valoracion 
      */
     @Transactional (propagation = Propagation.REQUIRES_NEW, readOnly = false, rollbackFor = transactionalBusinessException.ComentarViaException.class)
-    public void comentarVia(Integer _id_via, String _valor_comentario)
+    public void comentarVia(Integer _id_via, String _valor_comentario, Integer _puntuacion, String _valoracion)
     {
         usuarioConectado=daoUsuario.obtenerUsuario(username);
         
         Via v=daoVia.obtenerVia(_id_via);
         
         Comentario c=new Comentario(v, _valor_comentario, usuarioConectado);
+        c.setPuntuación(_puntuacion);
+        c.setValoracion(_valoracion);
         
         usuarioConectado.getComentarios().add(c);
         v.getComentarios().add(c);

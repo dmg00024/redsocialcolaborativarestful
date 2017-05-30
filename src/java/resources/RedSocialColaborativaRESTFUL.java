@@ -28,7 +28,9 @@ import dto.ViasDTO;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import modelo.Comentario;
 import modelo.Escuela;
 import modelo.Nivel;
@@ -1417,7 +1419,8 @@ public class RedSocialColaborativaRESTFUL {
      * @param _comentario
      */
     @RequestMapping(value = "/comentarios/{cod_via}", method = RequestMethod.POST, produces = "application/json")
-    public void add_comentario_via(@PathVariable("cod_via") Integer _cod_via, @RequestBody ComentarioDTO _comentario) {
+    public void add_comentario_via(@PathVariable("cod_via") Integer _cod_via, @RequestBody ComentarioDTO _comentario) 
+    {
         String usernameConectado = null;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -1427,7 +1430,7 @@ public class RedSocialColaborativaRESTFUL {
 
         red.setUsername(usernameConectado);
 
-        red.comentarVia(_cod_via, _comentario.getValor_comentario());
+        red.comentarVia(_cod_via, _comentario.getValor_comentario(), _comentario.getPuntuacion(), _comentario.getValoracion());
     }
 
     /**
@@ -1436,14 +1439,30 @@ public class RedSocialColaborativaRESTFUL {
      * @return
      */
     @RequestMapping(value = "/comentarios/{cod_via}", method = RequestMethod.GET, produces = "application/json")
-    public List<ComentariosDTO> comentarios_via(@PathVariable("cod_via") Integer _cod_via) {
+    public List<ComentariosDTO> comentarios_via(@PathVariable("cod_via") Integer _cod_via) 
+    {
+        Integer mes=null;
+        Integer dia=null;
+        Integer year=null;
+        
         List<ComentariosDTO> comentarios = new ArrayList();
 
-        for (Comentario comentario : red.comentariosVia(_cod_via)) {
+        for (Comentario comentario : red.comentariosVia(_cod_via)) 
+        {
             ComentariosDTO aux = new ComentariosDTO();
 
             aux.setUsername(comentario.getUsuario().getUsername());
             aux.setValor_comentario(comentario.getComentario());
+            aux.setPuntuacion(comentario.getPuntuación());
+            aux.setValoracion(comentario.getComentario());
+            
+            dia=comentario.getFecha().get(Calendar.DAY_OF_MONTH);
+            mes=comentario.getFecha().get(Calendar.MONTH);
+            year=comentario.getFecha().get(Calendar.YEAR);
+            mes=mes+1;
+            
+            aux.setFecha(dia.toString()+'-'+mes.toString()+'-'+year.toString());
+            aux.setHora(comentario.getHora().toString());
 
             comentarios.add(aux);
         }
