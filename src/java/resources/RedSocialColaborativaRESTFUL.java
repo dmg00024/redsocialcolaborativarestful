@@ -1673,6 +1673,8 @@ public class RedSocialColaborativaRESTFUL {
         aux.setContador(via.getContador());
         aux.setEstrellas(via.getEstrellas());
         aux.setSector(via.getSector().getNombreSector());
+        aux.setEscuela(via.getSector().getEscuela().getNombreEscuela());
+        aux.setProvincia(via.getSector().getEscuela().getUbicacion().getProvincia());
         
         switch (via.getNivel().getNivelAsociado()) {
                 case _1:
