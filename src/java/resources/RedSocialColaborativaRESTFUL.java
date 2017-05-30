@@ -1441,9 +1441,9 @@ public class RedSocialColaborativaRESTFUL {
     @RequestMapping(value = "/comentarios/{cod_via}", method = RequestMethod.GET, produces = "application/json")
     public List<ComentariosDTO> comentarios_via(@PathVariable("cod_via") Integer _cod_via) 
     {
-        Integer mes=null;
-        Integer dia=null;
-        Integer year=null;
+        Integer mes;
+        Integer dia;
+        Integer year;
         
         List<ComentariosDTO> comentarios = new ArrayList();
 
