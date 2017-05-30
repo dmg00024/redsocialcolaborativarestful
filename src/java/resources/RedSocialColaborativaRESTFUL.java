@@ -426,15 +426,18 @@ public class RedSocialColaborativaRESTFUL {
         String usernameConectado = null;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (principal instanceof UserDetails) {
+        if (principal instanceof UserDetails)
+        {
             usernameConectado = ((UserDetails) principal).getUsername();
         }
 
         red.setUsername(usernameConectado);
 
-        for (Usuario amigo : red.getUsuarioConectado().getAmigos()) {
+        for (Usuario amigo : red.getUsuarioConectado().getAmigos())
+        {
             AmigosDTO aux = new AmigosDTO();
             aux.setUsername(amigo.getUsername());
+            aux.setNombre(amigo.getNombre()+' '+amigo.getApellidos());
             amigos.add(aux);
         }
 
@@ -455,9 +458,11 @@ public class RedSocialColaborativaRESTFUL {
         
         Usuario u=red.getDaoUsuario().obtenerUsuario(_username);
 
-        for (Usuario amigo : u.getAmigos()) {
+        for (Usuario amigo : u.getAmigos()) 
+        {
             AmigosDTO aux = new AmigosDTO();
             aux.setUsername(amigo.getUsername());
+            aux.setNombre(amigo.getNombre()+' '+amigo.getApellidos());
             amigos.add(aux);
         }
 
@@ -489,6 +494,8 @@ public class RedSocialColaborativaRESTFUL {
             aux.setId_mapa(via.getIdv_via());
             aux.setNombre(via.getNombre());
             aux.setSector(via.getSector().getNombreSector());
+            aux.setEscuela(via.getSector().getEscuela().getNombreEscuela());
+            aux.setProvincia(via.getSector().getEscuela().getUbicacion().getProvincia());
             aux.setContador(via.getContador());
             aux.setEstrellas(via.getEstrellas());
 
@@ -1446,7 +1453,8 @@ public class RedSocialColaborativaRESTFUL {
         Integer year;
         
         List<ComentariosDTO> comentarios = new ArrayList();
-
+        List<ComentariosDTO> comentarios10=new ArrayList();
+        
         for (Comentario comentario : red.comentariosVia(_cod_via)) 
         {
             ComentariosDTO aux = new ComentariosDTO();
@@ -1466,8 +1474,23 @@ public class RedSocialColaborativaRESTFUL {
 
             comentarios.add(aux);
         }
+        
+        if(comentarios.size() < 10)
+        {
+            for(int i=comentarios.size()-1; i>=0 ;i--)
+            {
+                comentarios10.add(comentarios.get(i));
+            }
+        }
+        else
+        {
+            for(int i=comentarios.size()-1; i>= comentarios.size()-10; i--)
+            {
+                comentarios10.add(comentarios.get(i));
+            }
+        }
 
-        return comentarios;
+        return comentarios10;
     }
 
     @RequestMapping(value = "/perfil/vias/{id_via}", method = RequestMethod.POST, consumes = "application/json")

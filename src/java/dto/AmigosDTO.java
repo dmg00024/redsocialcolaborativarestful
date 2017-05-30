@@ -12,6 +12,7 @@ package dto;
 public class AmigosDTO 
 {
     private String username;
+    private String nombre;
 
     /**
      * 
@@ -37,6 +38,24 @@ public class AmigosDTO
     public void setUsername(String username) 
     {
         this.username = username;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public String getNombre()
+    {
+        return nombre;
+    }
+
+    /**
+     * 
+     * @param nombre 
+     */
+    public void setNombre(String nombre) 
+    {
+        this.nombre = nombre;
     }
     
 }

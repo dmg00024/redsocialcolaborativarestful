@@ -15,10 +15,12 @@ public class ViasDTO
     private String id_mapa;
     private String nombre;
     private String sector;
+    private String escuela;
     private String nivel_oficial;
     private String nivel_consensuado;
     private Integer contador;
     private Integer estrellas;
+    private String provincia;
 
     /**
      * 
@@ -125,6 +127,24 @@ public class ViasDTO
      * 
      * @return 
      */
+    public String getEscuela() 
+    {
+        return escuela;
+    }
+    
+    /**
+     * 
+     * @param escuela 
+     */
+    public void setEscuela(String escuela) 
+    {
+        this.escuela = escuela;
+    }
+    
+    /**
+     * 
+     * @return 
+     */
     public String getNivel_oficial()
     {
         return nivel_oficial;
@@ -191,6 +211,24 @@ public class ViasDTO
     public void setEstrellas(Integer estrellas) 
     {
         this.estrellas = estrellas;
+    }
+
+    /**
+     * 
+     * @return 
+     */
+    public String getProvincia() 
+    {
+        return provincia;
+    }
+
+    /**
+     * 
+     * @param provincia 
+     */
+    public void setProvincia(String provincia) 
+    {
+        this.provincia = provincia;
     }
     
 }
