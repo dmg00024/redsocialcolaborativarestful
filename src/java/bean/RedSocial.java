@@ -372,7 +372,8 @@ public class RedSocial
 
             // Creo la parte del mensaje
             MimeBodyPart mimeBodyPart = new MimeBodyPart();
-            mimeBodyPart.setText("Confirme su registro pulsando en el siguiente enlace: http://localhost:8383/redsocialcolaborativaclientangularjs/confirmacion.html?"+"token="+token.getToken());
+            String ip="90.165.24.228";
+            mimeBodyPart.setText("Confirme su registro pulsando en el siguiente enlace: http://"+ip+":8383/redsocialcolaborativaclientangularjs/confirmacion.html?"+"token="+token.getToken());
             //mimeBodyPart.setText("Confirme su registro pulsando en el siguiente enlace: "+"Enlace aún no disponible");
 
             // Crear el multipart para agregar la parte del mensaje anterior
